@@ -757,7 +757,6 @@ function startMenuPolling() {
         syncMicStatus('mic-status-m');
       } else if (jogo) {
         mostrarTela('screen-sala');
-        document.getElementById('sala-code-badge').innerHTML = sala;
         syncMicStatus('mic-status-s');
         iniciarJogo();
       }
