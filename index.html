@@ -399,6 +399,20 @@ body.standalone .app { padding-top: 44px; }
   -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
   cursor:pointer; -webkit-flex-shrink:0; flex-shrink:0;
 }
+@-webkit-keyframes brcSlideIn {
+  from { opacity:0; -webkit-transform:translateX(-36px) scale(0.85); transform:translateX(-36px) scale(0.85); }
+  to   { opacity:1; -webkit-transform:none; transform:none; }
+}
+@keyframes brcSlideIn {
+  from { opacity:0; transform:translateX(-36px) scale(0.85); }
+  to   { opacity:1; transform:none; }
+}
+@-webkit-keyframes brcFlyUp {
+  to { opacity:0; -webkit-transform:translateY(-110px) scale(0.6); transform:translateY(-110px) scale(0.6); }
+}
+@keyframes brcFlyUp {
+  to { opacity:0; transform:translateY(-110px) scale(0.6); }
+}
 .brc-card {
   display:-webkit-inline-box; display:-webkit-inline-flex; display:inline-flex;
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
@@ -408,13 +422,17 @@ body.standalone .app { padding-top: 44px; }
   padding:3px 4px; font-family:'Courier New',Courier,monospace;
   font-size:13px; font-weight:700; color:#2a2a2a; cursor:pointer;
   -webkit-flex-shrink:0; flex-shrink:0;
-  -webkit-transition:-webkit-transform 0.12s; transition:transform 0.12s;
+  -webkit-transition:-webkit-transform 0.13s; transition:transform 0.13s;
+  -webkit-user-select:none; user-select:none;
+  touch-action:pan-x;
 }
 .brc-card.red { color:#c0392b; }
 .brc-card.wild { color:#7c3aed; background:#f0ebff; }
-.brc-card.selected { border-color:#2a2a2a; border-width:2.5px; -webkit-transform:translateY(-8px); transform:translateY(-8px); }
-.brc-card.sm { width:28px; height:40px; font-size:9px; border-radius:4px; padding:2px 3px; cursor:default; }
+.brc-card.selected { border-color:#2a2a2a; border-width:2.5px; -webkit-transform:translateY(-10px); transform:translateY(-10px); }
+.brc-card.sm { width:28px; height:40px; font-size:9px; border-radius:4px; padding:2px 3px; cursor:default; touch-action:none; }
 .brc-card.dc { width:50px; height:68px; font-size:15px; border-radius:8px; }
+.brc-card.novo { -webkit-animation:brcSlideIn 0.26s ease; animation:brcSlideIn 0.26s ease; }
+.brc-card.voando { -webkit-animation:brcFlyUp 0.22s ease forwards; animation:brcFlyUp 0.22s ease forwards; }
 .brc-meld {
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
@@ -627,8 +645,7 @@ body.standalone .app { padding-top: 44px; }
       </div>
       <div class="brc-mao" id="brc-mao"></div>
       <div class="brc-controls">
-        <button class="brc-btn" id="brc-btn-baixar" onclick="brcBaixar()">baixar</button>
-        <button class="brc-btn sec" id="brc-btn-descartar" onclick="brcDescartar()">descartar</button>
+        <button class="brc-btn" id="brc-btn-jogar" onclick="brcJogar()">jogar</button>
       </div>
       <div class="brc-status" id="brc-status"></div>
     </div>
@@ -1194,6 +1211,34 @@ var brcSel = [];
 var brcMeldSel = null;
 var brcPollTimer = null;
 var brcLastV = -1;
+var brcNewCardId = null;
+
+// ── Touch drag-to-discard ──────────────────────────────────────────
+var _brcTY0=null, _brcTX0=null, _brcTMov=false, _brcTEl=null, _brcBlockClick=false;
+
+function brcTS(e,id) {
+  _brcTY0=e.touches[0].clientY; _brcTX0=e.touches[0].clientX;
+  _brcTMov=false; _brcTEl=e.currentTarget;
+}
+function brcTM(e) {
+  if (_brcTY0===null) return;
+  var dy=e.touches[0].clientY-_brcTY0;
+  var dx=e.touches[0].clientX-_brcTX0;
+  if (dy<-10&&Math.abs(dy)>Math.abs(dx)) {
+    _brcTMov=true; e.preventDefault();
+    if (_brcTEl) { _brcTEl.style.webkitTransform='translateY('+dy+'px)'; _brcTEl.style.transform='translateY('+dy+'px)'; }
+  }
+}
+function brcTE(e,id) {
+  var dy=_brcTY0!==null?e.changedTouches[0].clientY-_brcTY0:0;
+  var moved=_brcTMov;
+  if (_brcTEl) { _brcTEl.style.webkitTransform=''; _brcTEl.style.transform=''; }
+  _brcTY0=null; _brcTMov=false; _brcTEl=null;
+  _brcBlockClick=true; setTimeout(function(){ _brcBlockClick=false; },400);
+  if (moved&&dy<-48) { brcDescartarById(id); }
+  else if (!moved) { brcTogCard(id); }
+}
+function brcCardClick(id) { if (!_brcBlockClick) brcTogCard(id); }
 
 function brcBaralho() {
   var cards = [], id = 0;
@@ -1339,9 +1384,17 @@ function brcRender(est) {
 
   brcRenderMao(mao||[]);
 
-  el=document.getElementById('brc-stock-btn');    if(el) el.disabled=!mVez||est.fase!=='comprar';
-  el=document.getElementById('brc-btn-baixar');   if(el) el.disabled=!mVez||est.fase!=='jogar';
-  el=document.getElementById('brc-btn-descartar');if(el) el.disabled=!mVez||est.fase!=='jogar';
+  el=document.getElementById('brc-stock-btn'); if(el) el.disabled=!mVez||est.fase!=='comprar';
+  el=document.getElementById('brc-btn-jogar');
+  if(el){
+    el.disabled=!mVez||est.fase!=='jogar';
+    if(mVez&&est.fase==='jogar'){
+      if(brcMeldSel!==null) el.innerHTML='adicionar';
+      else if(brcSel.length===1) el.innerHTML='descartar';
+      else if(brcSel.length>=3) el.innerHTML='baixar';
+      else el.innerHTML='jogar';
+    } else { el.innerHTML='jogar'; }
+  }
 
   if (est.fim) {
     var fEl=document.getElementById('brc-fim');
@@ -1361,10 +1414,12 @@ function brcRender(est) {
   if (!mortoU&&(mao||[]).length===0&&est.fase==='jogar') { brcPegarMorto(est); return; }
 
   var msg='';
-  if (!mVez) { msg='aguardando oponente...'; }
-  else if (est.fase==='comprar') { msg='compre do monte ou do descarte'; }
-  else if (brcMeldSel!==null) { msg=brcSel.length?'toque "baixar" para adicionar':'selecione cartas para adicionar'; }
-  else { msg=brcSel.length?'baixar (meld) ou descartar (1 carta)':'selecione cartas da mão'; }
+  if (!mVez) { msg='vez do oponente...'; }
+  else if (est.fase==='comprar') { msg='compre do monte  ou do descarte'; }
+  else if (brcMeldSel!==null) { msg=brcSel.length?'selecione "adicionar"':'toque nas cartas para adicionar'; }
+  else if (brcSel.length===1) { msg='deslize ↑ para descartar ou selecione mais cartas'; }
+  else if (brcSel.length>=3) { msg='toque "baixar" para jogar o meld'; }
+  else { msg='toque para selecionar  •  deslize ↑ para descartar'; }
   if (!mortoU&&(morto||[]).length>0) msg=msg+' • morto disponível';
   brcSetStatus(msg);
 }
@@ -1374,8 +1429,14 @@ function brcRenderMao(mao) {
   if (!el) return;
   var h='';
   for (var i=0;i<mao.length;i++) {
-    var c=mao[i], sel=brcSel.indexOf(c.id)>=0;
-    h+='<div class="brc-card'+brcCC(c)+(sel?' selected':'')+'" onclick="brcTogCard('+c.id+')">' +
+    var c=mao[i];
+    var sel=brcSel.indexOf(c.id)>=0;
+    var novo=(brcNewCardId!==null&&c.id===brcNewCardId);
+    h+='<div class="brc-card'+brcCC(c)+(sel?' selected':'')+(novo?' novo':'')+'"'+
+       ' ontouchstart="brcTS(event,'+c.id+')"'+
+       ' ontouchmove="brcTM(event)"'+
+       ' ontouchend="brcTE(event,'+c.id+')"'+
+       ' onclick="brcCardClick('+c.id+')">' +
        '<span>'+brcRS(c)+'</span><span>'+brcSS(c)+'</span></div>';
   }
   el.innerHTML=h;
@@ -1427,7 +1488,9 @@ function brcComprar() {
   var card=ne.stock.pop();
   if (papel==='a') ne.maoA.push(card); else ne.maoB.push(card);
   ne.fase='jogar'; ne.v=Date.now();
+  brcNewCardId=card.id;
   brcEst=ne; brcSave(ne); brcRender(ne);
+  setTimeout(function(){ brcNewCardId=null; }, 400);
 }
 
 function brcComprarDescarte() {
@@ -1451,10 +1514,12 @@ function brcComprarDescarte() {
   if (papel==='a') { for(var i=0;i<pile.length;i++) ne.maoA.push(pile[i]); }
   else { for(var i=0;i<pile.length;i++) ne.maoB.push(pile[i]); }
   ne.descarte=[]; ne.fase='jogar'; ne.v=Date.now();
+  brcNewCardId=pile.length?pile[pile.length-1].id:null;
   brcEst=ne; brcSave(ne); brcRender(ne);
+  setTimeout(function(){ brcNewCardId=null; },400);
 }
 
-function brcBaixar() {
+function brcJogar() {
   var est=brcEst;
   if (!est||est.turno!==papel||est.fase!=='jogar') return;
   var mao=(papel==='a'?est.maoA:est.maoB).slice();
@@ -1463,15 +1528,18 @@ function brcBaixar() {
   for (var i=0;i<mao.length;i++) {
     if (brcSel.indexOf(mao[i].id)>=0) sel.push(mao[i]); else rest.push(mao[i]);
   }
+  // 1 carta selecionada sem meld = descartar
+  if (brcMeldSel===null&&sel.length===1) { brcDescartarById(sel[0].id); return; }
+
   if (brcMeldSel!==null) {
     if (!sel.length) { brcSetStatus('selecione cartas para adicionar'); return; }
-    if (brcMeldSel>=meus.length) { brcSetStatus('meld inválido'); return; }
+    if (brcMeldSel>=meus.length) return;
     var ext=meus[brcMeldSel].concat(sel);
     if (!brcValMeld(ext)) { brcSetStatus('combinação inválida para esse meld'); return; }
     meus[brcMeldSel]=ext;
   } else {
-    if (sel.length<3) { brcSetStatus('mínimo 3 cartas para um meld'); return; }
-    if (!brcValMeld(sel)) { brcSetStatus('meld inválido — mesma patente ou sequência do mesmo naipe'); return; }
+    if (sel.length<3) { brcSetStatus('selecione 3+ cartas para baixar'); return; }
+    if (!brcValMeld(sel)) { brcSetStatus('meld inválido — mesma patente ou sequência'); return; }
     meus.push(sel);
   }
   var ne=brcClone(est);
@@ -1480,23 +1548,22 @@ function brcBaixar() {
   brcEst=ne; brcSave(ne); brcRender(ne);
 }
 
-function brcDescartar() {
+function brcDescartarById(id) {
   var est=brcEst;
   if (!est||est.turno!==papel||est.fase!=='jogar') return;
-  if (brcSel.length!==1) { brcSetStatus('selecione exatamente 1 carta para descartar'); return; }
   var mao=(papel==='a'?est.maoA:est.maoB).slice();
   var mortoU=papel==='a'?est.mortoUsadoA:est.mortoUsadoB;
-  var cid=brcSel[0], disc=null, rest=[];
+  var disc=null, rest=[];
   for (var i=0;i<mao.length;i++) {
-    if (mao[i].id===cid) disc=mao[i]; else rest.push(mao[i]);
+    if (mao[i].id===id) disc=mao[i]; else rest.push(mao[i]);
   }
-  if (!disc) { brcSetStatus('carta não encontrada'); return; }
+  if (!disc) return;
+  brcSel=[]; brcMeldSel=null;
   var ne=brcClone(est);
   if (papel==='a') ne.maoA=rest; else ne.maoB=rest;
   ne.descarte.push(disc);
   if (!rest.length&&mortoU) { brcFinalizar(ne); return; }
   ne.turno=papel==='a'?'b':'a'; ne.fase='comprar'; ne.v=Date.now();
-  brcSel=[]; brcMeldSel=null;
   brcEst=ne; brcSave(ne); brcRender(ne);
 }
 
