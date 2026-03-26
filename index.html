@@ -342,6 +342,131 @@ body.standalone .app { padding-top: 44px; }
   -webkit-transition: opacity 0.2s, -webkit-transform 0.2s; transition: opacity 0.2s, transform 0.2s;
 }
 .toast.on { opacity: 1; -webkit-transform: translateX(-50%) translateY(0); transform: translateX(-50%) translateY(0); }
+
+/* ══════════════ BURACO ══════════════ */
+.brc-outer {
+  -webkit-box-flex:1; -webkit-flex:1; flex:1;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  overflow:hidden;
+}
+.brc-op-bar {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  padding:6px 16px; font-family:'Courier New',Courier,monospace;
+  font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+  opacity:0.7; -webkit-flex-shrink:0; flex-shrink:0;
+}
+.brc-table {
+  -webkit-box-flex:1; -webkit-flex:1; flex:1;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  overflow-y:auto; padding:0 10px; gap:4px; min-height:0;
+  -webkit-overflow-scrolling:touch;
+}
+.brc-melds-area {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-flex-wrap:wrap; flex-wrap:wrap;
+  -webkit-align-content:flex-start; align-content:flex-start;
+  gap:5px; min-height:44px;
+}
+.brc-sep { width:100%; height:1px; background:rgba(0,0,0,0.12); -webkit-flex-shrink:0; flex-shrink:0; }
+.brc-center {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
+  gap:12px;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+  padding:8px 0; -webkit-flex-shrink:0; flex-shrink:0;
+}
+.brc-stock-btn {
+  width:52px; height:72px; border-radius:8px;
+  border:2px solid rgba(0,0,0,0.2); background:rgba(0,0,0,0.2);
+  font-family:'Courier New',Courier,monospace; font-size:10px; color:#2a2a2a; cursor:pointer;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+  gap:2px;
+}
+.brc-stock-btn:disabled { opacity:0.4; cursor:default; }
+.brc-disc-area {
+  width:52px; height:72px; border-radius:8px;
+  border:2px dashed rgba(0,0,0,0.25);
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+  cursor:pointer; -webkit-flex-shrink:0; flex-shrink:0;
+}
+.brc-card {
+  display:-webkit-inline-box; display:-webkit-inline-flex; display:inline-flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between;
+  width:42px; height:58px; border-radius:6px;
+  background:#f4ede4; border:1.5px solid rgba(0,0,0,0.15);
+  padding:3px 4px; font-family:'Courier New',Courier,monospace;
+  font-size:13px; font-weight:700; color:#2a2a2a; cursor:pointer;
+  -webkit-flex-shrink:0; flex-shrink:0;
+  -webkit-transition:-webkit-transform 0.12s; transition:transform 0.12s;
+}
+.brc-card.red { color:#c0392b; }
+.brc-card.wild { color:#7c3aed; background:#f0ebff; }
+.brc-card.selected { border-color:#2a2a2a; border-width:2.5px; -webkit-transform:translateY(-8px); transform:translateY(-8px); }
+.brc-card.sm { width:28px; height:40px; font-size:9px; border-radius:4px; padding:2px 3px; cursor:default; }
+.brc-card.dc { width:50px; height:68px; font-size:15px; border-radius:8px; }
+.brc-meld {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  background:rgba(0,0,0,0.12); border-radius:10px; padding:4px 6px; gap:2px; cursor:pointer;
+}
+.brc-meld.sel-meld { outline:2.5px solid #2a2a2a; }
+.brc-meld.can { background:rgba(0,0,0,0.2); }
+.brc-meld.can-limpa { background:rgba(180,130,40,0.25); outline:1.5px solid rgba(180,130,40,0.5); }
+.brc-meld-tag {
+  font-family:'Courier New',Courier,monospace; font-size:8px; opacity:0.55;
+  margin-left:3px; -webkit-align-self:flex-end; align-self:flex-end; margin-bottom:2px;
+}
+.brc-mao {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
+  overflow-x:auto; padding:10px 12px 6px; gap:5px;
+  -webkit-flex-shrink:0; flex-shrink:0; -webkit-overflow-scrolling:touch;
+}
+.brc-controls {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
+  gap:8px; padding:6px 12px 4px; -webkit-flex-shrink:0; flex-shrink:0;
+}
+.brc-btn {
+  -webkit-box-flex:1; -webkit-flex:1; flex:1;
+  padding:14px; border-radius:14px; border:none;
+  background:#2a2a2a; color:#f4ede4;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:16px; font-weight:700; cursor:pointer;
+}
+.brc-btn:disabled { opacity:0.3; cursor:default; }
+.brc-btn:active { opacity:0.75; }
+.brc-btn.sec { background:rgba(0,0,0,0.18); color:#2a2a2a; }
+.brc-status {
+  font-family:'Courier New',Courier,monospace;
+  font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+  text-align:center; opacity:0.65; padding:4px 12px 8px;
+  min-height:24px; -webkit-flex-shrink:0; flex-shrink:0;
+}
+.brc-fim {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.82); z-index:9990;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+  gap:16px; color:#f4ede4; text-align:center; padding:28px;
+}
+.brc-fim.hidden { display:none !important; }
+.brc-fim-title { font-size:30px; font-weight:700; margin-bottom:6px; }
+.brc-fim-score { font-family:'Courier New',Courier,monospace; font-size:13px; letter-spacing:0.1em; line-height:1.9; }
 </style>
 </head>
 <body>
@@ -396,11 +521,11 @@ body.standalone .app { padding-top: 44px; }
         <div class="game-name">dados</div>
         <div class="game-desc">role e compare</div>
       </button>
-      <div class="game-card soon">
+      <button class="game-card" onclick="selecionarJogo('buraco')">
         <div class="game-emoji">🃏</div>
-        <div class="game-name">em breve</div>
-        <div class="game-desc">próximo jogo</div>
-      </div>
+        <div class="game-name">buraco</div>
+        <div class="game-desc">baralho • canastras</div>
+      </button>
     </div>
   </div>
 
@@ -477,8 +602,44 @@ body.standalone .app { padding-top: 44px; }
       <div class="rps-waiting" id="dados-waiting" style="margin-top:14px"></div>
       <button class="nova-rodada-btn hidden" id="btn-nova-rodada-dados" onclick="dadosNovaRodada()">nova rodada</button>
     </div>
+
+    <!-- ── BURACO ── -->
+    <div class="brc-outer hidden" id="jogo-buraco">
+      <div class="brc-op-bar">
+        <span id="brc-op-cards">🂠 0</span>
+        <span id="brc-turno-label" style="font-weight:700">—</span>
+        <span id="brc-op-melds">melds: 0</span>
+      </div>
+      <div class="brc-table">
+        <div class="brc-melds-area" id="brc-melds-op"></div>
+        <div class="brc-sep"></div>
+        <div class="brc-center">
+          <button class="brc-stock-btn" id="brc-stock-btn" onclick="brcComprar()">
+            <span style="font-size:22px">🂠</span>
+            <span id="brc-stock-count">0</span>
+          </button>
+          <div class="brc-disc-area" id="brc-disc-area" onclick="brcComprarDescarte()">
+            <div id="brc-disc-top"></div>
+          </div>
+        </div>
+        <div class="brc-sep"></div>
+        <div class="brc-melds-area" id="brc-melds-eu"></div>
+      </div>
+      <div class="brc-mao" id="brc-mao"></div>
+      <div class="brc-controls">
+        <button class="brc-btn" id="brc-btn-baixar" onclick="brcBaixar()">baixar</button>
+        <button class="brc-btn sec" id="brc-btn-descartar" onclick="brcDescartar()">descartar</button>
+      </div>
+      <div class="brc-status" id="brc-status"></div>
+    </div>
   </div>
 
+</div>
+
+<!-- BURACO fim overlay -->
+<div class="brc-fim hidden" id="brc-fim">
+  <div id="brc-fim-text"></div>
+  <button class="nova-rodada-btn" style="margin-top:8px" onclick="brcNovaPartida()">nova partida</button>
 </div>
 
 <!-- MUTE FAB — fora do .app, sempre por cima -->
@@ -594,7 +755,7 @@ function startMenuPolling() {
         mostrarTela('screen-menu');
         document.getElementById('menu-sala-badge').innerHTML = sala;
         syncMicStatus('mic-status-m');
-      } else if (jogo === 'rps') {
+      } else if (jogo) {
         mostrarTela('screen-sala');
         document.getElementById('sala-code-badge').innerHTML = sala;
         syncMicStatus('mic-status-s');
@@ -823,10 +984,12 @@ function aguardarJogadorB() {
 // JOGO ATIVO — router
 // ═══════════════════════════════════════════════════════════════════
 function iniciarJogo() {
-  document.getElementById('jogo-rps').className   = jogoAtivoAnterior === 'rps'   ? 'rps-wrap' : 'rps-wrap hidden';
-  document.getElementById('jogo-dados').className = jogoAtivoAnterior === 'dados' ? 'rps-wrap' : 'rps-wrap hidden';
-  if (jogoAtivoAnterior === 'rps')   iniciarRPS();
-  if (jogoAtivoAnterior === 'dados') iniciarDados();
+  document.getElementById('jogo-rps').className    = jogoAtivoAnterior === 'rps'    ? 'rps-wrap'  : 'rps-wrap hidden';
+  document.getElementById('jogo-dados').className  = jogoAtivoAnterior === 'dados'  ? 'rps-wrap'  : 'rps-wrap hidden';
+  document.getElementById('jogo-buraco').className = jogoAtivoAnterior === 'buraco' ? 'brc-outer' : 'brc-outer hidden';
+  if (jogoAtivoAnterior === 'rps')    iniciarRPS();
+  if (jogoAtivoAnterior === 'dados')  iniciarDados();
+  if (jogoAtivoAnterior === 'buraco') iniciarBuraco();
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1016,6 +1179,360 @@ function dadosNovaRodada() {
   dbPatch(sala + '/dados', { valorA: null, valorB: null });
   if (dadosPollingTimer) clearInterval(dadosPollingTimer);
   dadosPollingTimer = setInterval(pollDados, 1200);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// BURACO
+// ═══════════════════════════════════════════════════════════════════
+var BRC_RANKS = ['A','2','3','4','5','6','7','8','9','T','J','Q','K'];
+var BRC_SUITS = ['S','H','D','C'];
+var BRC_SYM   = {S:'♠',H:'♥',D:'♦',C:'♣'};
+var BRC_ORD   = {'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'T':8,'J':9,'Q':10,'K':11,'A':12};
+var BRC_VAL   = {'A':15,'2':20,'3':5,'4':5,'5':5,'6':5,'7':5,'8':10,'9':10,'T':10,'J':10,'Q':10,'K':10,'JO':30};
+
+var brcEst = null;
+var brcSel = [];
+var brcMeldSel = null;
+var brcPollTimer = null;
+var brcLastV = -1;
+
+function brcBaralho() {
+  var cards = [], id = 0;
+  for (var d = 0; d < 2; d++) {
+    for (var r = 0; r < BRC_RANKS.length; r++) {
+      for (var s = 0; s < BRC_SUITS.length; s++) {
+        cards.push({id:id++, rank:BRC_RANKS[r], suit:BRC_SUITS[s]});
+      }
+    }
+    cards.push({id:id++, rank:'JO', suit:''});
+    cards.push({id:id++, rank:'JO', suit:''});
+  }
+  return cards;
+}
+
+function brcEmb(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+
+function brcWild(c) { return c.rank==='JO'||c.rank==='2'; }
+function brcRed(c)  { return c.suit==='H'||c.suit==='D'; }
+
+function brcValRank(cards) {
+  var nat=[], w=0;
+  for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
+  if (!nat.length) return false;
+  if (nat[0].rank==='2') return false;
+  var r0=nat[0].rank;
+  for (var i=1;i<nat.length;i++) { if(nat[i].rank!==r0) return false; }
+  return w<=nat.length;
+}
+
+function brcValSeq(cards) {
+  var nat=[], w=0;
+  for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
+  if (!nat.length) return false;
+  var s0=nat[0].suit;
+  if (!s0) return false;
+  for (var i=0;i<nat.length;i++) {
+    if (nat[i].suit!==s0) return false;
+    if (!BRC_ORD[nat[i].rank]) return false;
+  }
+  nat.sort(function(a,b){ return BRC_ORD[a.rank]-BRC_ORD[b.rank]; });
+  var wl=w;
+  for (var i=1;i<nat.length;i++) {
+    var gap=BRC_ORD[nat[i].rank]-BRC_ORD[nat[i-1].rank]-1;
+    if (gap<0) return false;
+    wl-=gap;
+    if (wl<0) return false;
+  }
+  return true;
+}
+
+function brcValMeld(c) { return c&&c.length>=3&&(brcValRank(c)||brcValSeq(c)); }
+
+function brcIsCan(m) { return m.length>=7; }
+function brcIsLimpa(m) {
+  if (!brcIsCan(m)) return false;
+  for (var i=0;i<m.length;i++) { if(brcWild(m[i])) return false; }
+  return true;
+}
+
+function brcMeldPts(m) {
+  var p=0;
+  for (var i=0;i<m.length;i++) p+=(BRC_VAL[m[i].rank]||5);
+  if (brcIsLimpa(m)) p+=200; else if (brcIsCan(m)) p+=100;
+  return p;
+}
+
+function brcHandPen(h) {
+  var p=0; for (var i=0;i<h.length;i++) p+=(BRC_VAL[h[i].rank]||5); return p;
+}
+
+function brcClone(o) { return JSON.parse(JSON.stringify(o)); }
+
+// ── Init ──────────────────────────────────────────────────────────
+function iniciarBuraco() {
+  brcSel=[]; brcMeldSel=null; brcEst=null; brcLastV=-1;
+  if (brcPollTimer) clearInterval(brcPollTimer);
+
+  if (papel==='a') {
+    var deck=brcEmb(brcBaralho());
+    var est={
+      v:Date.now(),
+      maoA:deck.splice(0,11), maoB:deck.splice(0,11),
+      stock:deck, descarte:[],
+      mortoA:deck.splice(0,11), mortoB:deck.splice(0,11),
+      canastrasA:[], canastrasB:[],
+      turno:'a', fase:'comprar',
+      mortoUsadoA:false, mortoUsadoB:false, fim:null
+    };
+    // Fix: mortos were spliced from already-spliced deck — redo properly
+    var d2=brcEmb(brcBaralho());
+    var mA=d2.splice(0,11), mB=d2.splice(0,11);
+    var moA=d2.splice(0,11), moB=d2.splice(0,11);
+    est={v:Date.now(),maoA:mA,maoB:mB,stock:d2,descarte:[],mortoA:moA,mortoB:moB,canastrasA:[],canastrasB:[],turno:'a',fase:'comprar',mortoUsadoA:false,mortoUsadoB:false,fim:null};
+    brcEst=est;
+    brcSave(est, function(){ brcRender(est); brcStartPoll(); });
+  } else {
+    brcSetStatus('aguardando baralho...');
+    brcStartPoll();
+  }
+}
+
+function brcSave(est,cb) { dbPut(sala+'/buraco', est, cb||function(){}); }
+
+function brcStartPoll() {
+  if (brcPollTimer) clearInterval(brcPollTimer);
+  brcPollTimer=setInterval(function(){
+    dbGet(sala+'/buraco', function(data){
+      if (!data||data.v===brcLastV) return;
+      brcLastV=data.v; brcEst=data; brcRender(data);
+    });
+  }, 1400);
+}
+
+// ── Render ────────────────────────────────────────────────────────
+function brcRender(est) {
+  if (!est) return;
+  var mao   = papel==='a'?est.maoA:est.maoB;
+  var opMao = papel==='a'?est.maoB:est.maoA;
+  var meus  = papel==='a'?est.canastrasA:est.canastrasB;
+  var opM   = papel==='a'?est.canastrasB:est.canastrasA;
+  var mortoU= papel==='a'?est.mortoUsadoA:est.mortoUsadoB;
+  var morto = papel==='a'?est.mortoA:est.mortoB;
+  var mVez  = est.turno===papel;
+  var el;
+
+  el=document.getElementById('brc-op-cards');   if(el) el.innerHTML='🂠 '+((opMao||[]).length);
+  el=document.getElementById('brc-op-melds');   if(el) el.innerHTML='melds: '+((opM||[]).length);
+  el=document.getElementById('brc-turno-label');if(el) el.innerHTML=mVez?'sua vez':'vez do oponente';
+  el=document.getElementById('brc-stock-count');if(el) el.innerHTML=(est.stock||[]).length;
+
+  el=document.getElementById('brc-disc-top');
+  if(el){ var d=est.descarte||[]; el.innerHTML=d.length?brcCEl(d[d.length-1],'dc'):''; }
+
+  el=document.getElementById('brc-melds-op'); if(el) el.innerHTML=brcMeldsHtml(opM||[],false);
+  el=document.getElementById('brc-melds-eu'); if(el) el.innerHTML=brcMeldsHtml(meus||[],true);
+
+  brcRenderMao(mao||[]);
+
+  el=document.getElementById('brc-stock-btn');    if(el) el.disabled=!mVez||est.fase!=='comprar';
+  el=document.getElementById('brc-btn-baixar');   if(el) el.disabled=!mVez||est.fase!=='jogar';
+  el=document.getElementById('brc-btn-descartar');if(el) el.disabled=!mVez||est.fase!=='jogar';
+
+  if (est.fim) {
+    var fEl=document.getElementById('brc-fim');
+    if(fEl) fEl.className='brc-fim';
+    el=document.getElementById('brc-fim-text');
+    if(el){
+      var mp=papel==='a'?est.fim.pontoA:est.fim.pontoB;
+      var op=papel==='a'?est.fim.pontoB:est.fim.pontoA;
+      var tx=mp>op?'você ganhou!':(mp<op?'você perdeu!':'empate!');
+      el.innerHTML='<div class="brc-fim-title">'+tx+'</div>'+
+        '<div class="brc-fim-score">você: '+mp+' pts<br>oponente: '+op+' pts</div>';
+    }
+    return;
+  }
+
+  // Auto pegar morto se mão vazia na fase jogar
+  if (!mortoU&&(mao||[]).length===0&&est.fase==='jogar') { brcPegarMorto(est); return; }
+
+  var msg='';
+  if (!mVez) { msg='aguardando oponente...'; }
+  else if (est.fase==='comprar') { msg='compre do monte ou do descarte'; }
+  else if (brcMeldSel!==null) { msg=brcSel.length?'toque "baixar" para adicionar':'selecione cartas para adicionar'; }
+  else { msg=brcSel.length?'baixar (meld) ou descartar (1 carta)':'selecione cartas da mão'; }
+  if (!mortoU&&(morto||[]).length>0) msg=msg+' • morto disponível';
+  brcSetStatus(msg);
+}
+
+function brcRenderMao(mao) {
+  var el=document.getElementById('brc-mao');
+  if (!el) return;
+  var h='';
+  for (var i=0;i<mao.length;i++) {
+    var c=mao[i], sel=brcSel.indexOf(c.id)>=0;
+    h+='<div class="brc-card'+brcCC(c)+(sel?' selected':'')+'" onclick="brcTogCard('+c.id+')">' +
+       '<span>'+brcRS(c)+'</span><span>'+brcSS(c)+'</span></div>';
+  }
+  el.innerHTML=h;
+}
+
+function brcMeldsHtml(melds,ismine) {
+  var h='';
+  for (var m=0;m<melds.length;m++) {
+    var meld=melds[m], isSel=ismine&&brcMeldSel===m;
+    var isCan=brcIsCan(meld), isLim=brcIsLimpa(meld);
+    var cls='brc-meld'+(isSel?' sel-meld':'')+(isLim?' can-limpa':isCan?' can':'');
+    h+='<div class="'+cls+'"'+(ismine?' onclick="brcTogMeld('+m+')"':'')+'>';
+    for (var c=0;c<meld.length;c++) h+=brcCEl(meld[c],'sm');
+    if (isCan) h+='<span class="brc-meld-tag">'+(isLim?'★':'☆')+brcMeldPts(meld)+'</span>';
+    h+='</div>';
+  }
+  return h;
+}
+
+function brcCEl(c,cls) {
+  return '<div class="brc-card'+(cls?' '+cls:'')+brcCC(c)+'"><span>'+brcRS(c)+'</span><span>'+brcSS(c)+'</span></div>';
+}
+
+function brcCC(c) { return (c.rank==='JO'||c.rank==='2')?' wild':brcRed(c)?' red':''; }
+function brcRS(c) { return c.rank==='JO'?'★':(c.rank==='T'?'10':c.rank); }
+function brcSS(c) { return c.rank==='JO'?'':(BRC_SYM[c.suit]||''); }
+
+function brcSetStatus(msg) { var el=document.getElementById('brc-status'); if(el) el.innerHTML=msg; }
+
+// ── Interações ────────────────────────────────────────────────────
+function brcTogCard(id) {
+  if (!brcEst||brcEst.turno!==papel||brcEst.fase!=='jogar') return;
+  var i=brcSel.indexOf(id);
+  if (i>=0) brcSel.splice(i,1); else brcSel.push(id);
+  brcRender(brcEst);
+}
+
+function brcTogMeld(idx) {
+  brcMeldSel=brcMeldSel===idx?null:idx;
+  brcRender(brcEst);
+}
+
+// ── Ações ─────────────────────────────────────────────────────────
+function brcComprar() {
+  var est=brcEst;
+  if (!est||est.turno!==papel||est.fase!=='comprar') return;
+  if (!est.stock||!est.stock.length) { brcSetStatus('monte vazio!'); return; }
+  var ne=brcClone(est);
+  var card=ne.stock.pop();
+  if (papel==='a') ne.maoA.push(card); else ne.maoB.push(card);
+  ne.fase='jogar'; ne.v=Date.now();
+  brcEst=ne; brcSave(ne); brcRender(ne);
+}
+
+function brcComprarDescarte() {
+  var est=brcEst;
+  if (!est||est.turno!==papel||est.fase!=='comprar') return;
+  var disc=est.descarte||[];
+  if (!disc.length) { brcSetStatus('descarte vazio'); return; }
+  var top=disc[disc.length-1];
+  var mao=papel==='a'?est.maoA:est.maoB;
+  var meus=papel==='a'?est.canastrasA:est.canastrasB;
+  var ok=false;
+  for (var m=0;m<meus.length&&!ok;m++) { if(brcValMeld(meus[m].concat([top]))) ok=true; }
+  for (var i=0;i<mao.length&&!ok;i++) {
+    for (var j=i+1;j<mao.length&&!ok;j++) {
+      if (brcValMeld([mao[i],mao[j],top])) ok=true;
+    }
+  }
+  if (!ok) { brcSetStatus('não pode pegar o descarte agora'); return; }
+  var ne=brcClone(est);
+  var pile=ne.descarte.slice();
+  if (papel==='a') { for(var i=0;i<pile.length;i++) ne.maoA.push(pile[i]); }
+  else { for(var i=0;i<pile.length;i++) ne.maoB.push(pile[i]); }
+  ne.descarte=[]; ne.fase='jogar'; ne.v=Date.now();
+  brcEst=ne; brcSave(ne); brcRender(ne);
+}
+
+function brcBaixar() {
+  var est=brcEst;
+  if (!est||est.turno!==papel||est.fase!=='jogar') return;
+  var mao=(papel==='a'?est.maoA:est.maoB).slice();
+  var meus=(papel==='a'?est.canastrasA:est.canastrasB).slice();
+  var sel=[], rest=[];
+  for (var i=0;i<mao.length;i++) {
+    if (brcSel.indexOf(mao[i].id)>=0) sel.push(mao[i]); else rest.push(mao[i]);
+  }
+  if (brcMeldSel!==null) {
+    if (!sel.length) { brcSetStatus('selecione cartas para adicionar'); return; }
+    if (brcMeldSel>=meus.length) { brcSetStatus('meld inválido'); return; }
+    var ext=meus[brcMeldSel].concat(sel);
+    if (!brcValMeld(ext)) { brcSetStatus('combinação inválida para esse meld'); return; }
+    meus[brcMeldSel]=ext;
+  } else {
+    if (sel.length<3) { brcSetStatus('mínimo 3 cartas para um meld'); return; }
+    if (!brcValMeld(sel)) { brcSetStatus('meld inválido — mesma patente ou sequência do mesmo naipe'); return; }
+    meus.push(sel);
+  }
+  var ne=brcClone(est);
+  if (papel==='a'){ ne.maoA=rest; ne.canastrasA=meus; } else { ne.maoB=rest; ne.canastrasB=meus; }
+  ne.v=Date.now(); brcSel=[]; brcMeldSel=null;
+  brcEst=ne; brcSave(ne); brcRender(ne);
+}
+
+function brcDescartar() {
+  var est=brcEst;
+  if (!est||est.turno!==papel||est.fase!=='jogar') return;
+  if (brcSel.length!==1) { brcSetStatus('selecione exatamente 1 carta para descartar'); return; }
+  var mao=(papel==='a'?est.maoA:est.maoB).slice();
+  var mortoU=papel==='a'?est.mortoUsadoA:est.mortoUsadoB;
+  var cid=brcSel[0], disc=null, rest=[];
+  for (var i=0;i<mao.length;i++) {
+    if (mao[i].id===cid) disc=mao[i]; else rest.push(mao[i]);
+  }
+  if (!disc) { brcSetStatus('carta não encontrada'); return; }
+  var ne=brcClone(est);
+  if (papel==='a') ne.maoA=rest; else ne.maoB=rest;
+  ne.descarte.push(disc);
+  if (!rest.length&&mortoU) { brcFinalizar(ne); return; }
+  ne.turno=papel==='a'?'b':'a'; ne.fase='comprar'; ne.v=Date.now();
+  brcSel=[]; brcMeldSel=null;
+  brcEst=ne; brcSave(ne); brcRender(ne);
+}
+
+function brcPegarMorto(est) {
+  var mortoU=papel==='a'?est.mortoUsadoA:est.mortoUsadoB;
+  var morto=papel==='a'?est.mortoA:est.mortoB;
+  if (mortoU||!morto||!morto.length) return;
+  var ne=brcClone(est);
+  var mao=papel==='a'?ne.maoA:ne.maoB;
+  var m=papel==='a'?ne.mortoA:ne.mortoB;
+  for (var i=0;i<m.length;i++) mao.push(m[i]);
+  if (papel==='a'){ ne.maoA=mao; ne.mortoA=[]; ne.mortoUsadoA=true; }
+  else { ne.maoB=mao; ne.mortoB=[]; ne.mortoUsadoB=true; }
+  ne.v=Date.now(); brcEst=ne; brcSave(ne); brcRender(ne);
+  toast('morto pego! +11 cartas');
+}
+
+function brcFinalizar(est) {
+  var cA=est.canastrasA||[], cB=est.canastrasB||[];
+  var pA=0, pB=0;
+  for (var i=0;i<cA.length;i++) pA+=brcMeldPts(cA[i]);
+  for (var i=0;i<cB.length;i++) pB+=brcMeldPts(cB[i]);
+  pA-=brcHandPen(est.maoA||[]);
+  pB-=brcHandPen(est.maoB||[]);
+  if (papel==='a') pA+=100; else pB+=100;
+  est.fim={pontoA:pA, pontoB:pB}; est.v=Date.now();
+  brcEst=est; brcSave(est); brcRender(est);
+}
+
+function brcNovaPartida() {
+  var fEl=document.getElementById('brc-fim');
+  if(fEl) fEl.className='brc-fim hidden';
+  brcSel=[]; brcMeldSel=null;
+  if (brcPollTimer){ clearInterval(brcPollTimer); brcPollTimer=null; }
+  dbPatch(sala,{jogoAtivo:null});
 }
 </script>
 </body>
