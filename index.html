@@ -92,7 +92,7 @@ body.standalone .app { padding-top: 44px; }
 .join-wrap {
   width: 100%;
   display: -webkit-box; display: -webkit-flex; display: flex;
-  -webkit-box-orient: horizontal; -webkit-flex-direction: row; flex-direction: row;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
   gap: 10px;
 }
 .code-input {
@@ -107,11 +107,12 @@ body.standalone .app { padding-top: 44px; }
 .code-input:focus { border-bottom-color: rgba(0,0,0,0.6); }
 .code-input::-webkit-input-placeholder { opacity: 0.3; letter-spacing: 0.1em; }
 .join-btn {
-  padding: 10px 20px;
+  width: 100%;
+  padding: 18px;
   border-radius: 14px; border: none;
-  background: #2a2a2a; color: #f4ede4;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+  background: rgba(0,0,0,0.2); color: #2a2a2a;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px; font-weight: 700;
   cursor: pointer;
 }
 .join-btn:active { opacity: 0.75; }
