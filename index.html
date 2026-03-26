@@ -162,6 +162,69 @@ body.standalone .app { padding-top: 44px; }
   font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
   opacity: 0.55;
 }
+.back-btn {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  gap: 6px;
+  border: none; background: rgba(0,0,0,0.13); border-radius: 20px;
+  padding: 6px 14px 6px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #2a2a2a; cursor: pointer;
+}
+.back-btn:active { opacity: 0.7; }
+
+/* ══════════════ MENU BENTO ══════════════ */
+.menu-header {
+  padding: 14px 20px 8px;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.menu-sala-badge {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; letter-spacing: 0.14em; font-weight: 700;
+  background: rgba(0,0,0,0.15); border-radius: 20px; padding: 5px 12px;
+}
+.bento-grid {
+  -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-flex-wrap: wrap; flex-wrap: wrap;
+  padding: 10px 14px 20px;
+  gap: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start;
+  -webkit-box-content: flex-start; -webkit-align-content: flex-start; align-content: flex-start;
+}
+.game-card {
+  width: calc(50% - 6px);
+  height: calc(50vw - 20px);
+  border-radius: 20px;
+  background: rgba(0,0,0,0.15);
+  cursor: pointer;
+  padding: 18px;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+  -webkit-box-pack: end; -webkit-justify-content: flex-end; justify-content: flex-end;
+  -webkit-transition: -webkit-transform 0.12s; transition: transform 0.12s;
+  border: none;
+  text-align: left;
+}
+.game-card:active { -webkit-transform: scale(0.95); transform: scale(0.95); }
+.game-card.soon { opacity: 0.35; cursor: default; }
+.game-card:active.soon { -webkit-transform: none; transform: none; }
+.game-emoji { font-size: 36px; line-height: 1; margin-bottom: 10px; }
+.game-name {
+  font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
+  color: #2a2a2a; line-height: 1.1; margin-bottom: 4px;
+}
+.game-desc {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(0,0,0,0.5);
+}
 
 /* ══════════════ RPS GAME ══════════════ */
 .rps-wrap {
@@ -315,10 +378,38 @@ body.standalone .app { padding-top: 44px; }
     </div>
   </div>
 
+  <!-- ══ MENU ══ -->
+  <div class="screen" id="screen-menu">
+    <div class="menu-header">
+      <div class="menu-sala-badge" id="menu-sala-badge">----</div>
+      <div class="mic-status" id="mic-status-m">microfone</div>
+    </div>
+    <div class="bento-grid">
+      <button class="game-card" onclick="selecionarJogo('rps')">
+        <div class="game-emoji">🪨📄✂️</div>
+        <div class="game-name">pedra papel tesoura</div>
+        <div class="game-desc">escolha simultânea</div>
+      </button>
+      <button class="game-card" onclick="selecionarJogo('dados')">
+        <div class="game-emoji">🎲</div>
+        <div class="game-name">dados</div>
+        <div class="game-desc">role e compare</div>
+      </button>
+      <div class="game-card soon">
+        <div class="game-emoji">🃏</div>
+        <div class="game-name">em breve</div>
+        <div class="game-desc">próximo jogo</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ SALA ══ -->
   <div class="screen" id="screen-sala">
     <div class="sala-header">
-      <div class="sala-code-badge" id="sala-code-badge">----</div>
+      <button class="back-btn" onclick="voltarMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg>
+        jogos
+      </button>
       <div class="mic-status" id="mic-status-s">microfone</div>
     </div>
 
@@ -351,6 +442,39 @@ body.standalone .app { padding-top: 44px; }
 
       <div class="rps-waiting" id="rps-waiting"></div>
       <button class="nova-rodada-btn hidden" id="btn-nova-rodada" onclick="novaRodada()">nova rodada</button>
+    </div>
+
+    <!-- ── DADOS ── -->
+    <div class="rps-wrap hidden" id="jogo-dados">
+      <div class="rps-score">
+        <div class="score-block">
+          <div class="score-num" id="dados-score-eu">0</div>
+          <div class="score-label">você</div>
+        </div>
+        <div class="score-sep">×</div>
+        <div class="score-block">
+          <div class="score-num" id="dados-score-op">0</div>
+          <div class="score-label">oponente</div>
+        </div>
+      </div>
+
+      <div class="rps-result-area">
+        <div class="rps-result hidden" id="dados-result">
+          <div id="dados-result-text"></div>
+          <div class="rps-choices-display" id="dados-choices-display"></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div id="dado-eu" style="font-size:96px;line-height:1;text-align:center">⚀</div>
+      </div>
+
+      <button class="lobby-btn primary" id="btn-rolar" onclick="dadosRolar()" style="width:180px;border-radius:50px;padding:18px;font-size:20px">
+        rolar
+      </button>
+
+      <div class="rps-waiting" id="dados-waiting" style="margin-top:14px"></div>
+      <button class="nova-rodada-btn hidden" id="btn-nova-rodada-dados" onclick="dadosNovaRodada()">nova rodada</button>
     </div>
   </div>
 
@@ -443,10 +567,53 @@ function gerarCodigo() {
 }
 
 function mostrarTela(id) {
-  var telas = ['screen-lobby','screen-waiting','screen-sala'];
+  var telas = ['screen-lobby','screen-waiting','screen-menu','screen-sala'];
   for (var i = 0; i < telas.length; i++) {
     document.getElementById(telas[i]).className = telas[i] === id ? 'screen on' : 'screen';
   }
+}
+
+function selecionarJogo(jogo) {
+  dbPatch(sala, { jogoAtivo: jogo });
+}
+
+function voltarMenu() {
+  if (rpsPollingTimer) { clearInterval(rpsPollingTimer); rpsPollingTimer = null; }
+  rpsEscolha = null; rpsRevelado = false;
+  dbPatch(sala, { jogoAtivo: null });
+}
+
+var jogoAtivoAnterior = null;
+function startMenuPolling() {
+  setInterval(function() {
+    dbGet(sala + '/jogoAtivo', function(jogo) {
+      if (jogo === jogoAtivoAnterior) return;
+      jogoAtivoAnterior = jogo;
+      if (!jogo || jogo === 'null') {
+        mostrarTela('screen-menu');
+        document.getElementById('menu-sala-badge').innerHTML = sala;
+        syncMicStatus('mic-status-m');
+      } else if (jogo === 'rps') {
+        mostrarTela('screen-sala');
+        document.getElementById('sala-code-badge').innerHTML = sala;
+        syncMicStatus('mic-status-s');
+        iniciarJogo();
+      }
+    });
+  }, 1200);
+}
+
+function syncMicStatus(targetId) {
+  var els = ['mic-status-w','mic-status-m','mic-status-s'];
+  var msg = document.getElementById(els[0]).innerHTML ||
+            document.getElementById(els[1]).innerHTML ||
+            document.getElementById(els[2]).innerHTML;
+  for (var i = 0; i < els.length; i++) {
+    var el = document.getElementById(els[i]);
+    if (el && el.innerHTML) { msg = el.innerHTML; break; }
+  }
+  var t = document.getElementById(targetId);
+  if (t && msg) t.innerHTML = msg;
 }
 
 // ── Dots animation ────────────────────────────────────────────────
@@ -603,10 +770,11 @@ function criarSala() {
   mostrarTela('screen-waiting');
   startDots('dots');
 
-  dbPut(sala, { criado: Date.now(), estado: 'aguardando', jogo: 'rps', rps: { escolhaA: null, escolhaB: null } });
+  dbPut(sala, { criado: Date.now(), estado: 'aguardando', jogoAtivo: null, rps: { escolhaA: null, escolhaB: null } });
 
   setupMic(function(ok) {
     if (ok) setMicStatus('microfone pronto');
+    else setMicStatus('sem microfone');
     aguardarJogadorB();
   });
 }
@@ -621,10 +789,10 @@ function entrarSala() {
     if (!estado) { toast('sala não encontrada'); sala = null; papel = null; return; }
     if (estado === 'jogando') { toast('sala já em jogo'); sala = null; papel = null; return; }
 
-    dbPatch(sala, { estado: 'jogando' });
-    mostrarTela('screen-sala');
-    document.getElementById('sala-code-badge').innerHTML = sala;
-    iniciarJogo();
+    dbPatch(sala, { estado: 'jogando', jogoAtivo: null });
+    mostrarTela('screen-menu');
+    document.getElementById('menu-sala-badge').innerHTML = sala;
+    startMenuPolling();
 
     setupMic(function(ok) {
       if (ok) { initWebRTC(false); }
@@ -641,13 +809,23 @@ function aguardarJogadorB() {
       if (estado === 'jogando') {
         clearInterval(waitingTimer);
         stopDots();
-        mostrarTela('screen-sala');
-        document.getElementById('sala-code-badge').innerHTML = sala;
-        iniciarJogo();
+        mostrarTela('screen-menu');
+        document.getElementById('menu-sala-badge').innerHTML = sala;
+        startMenuPolling();
         initWebRTC(true);
       }
     });
   }, 1500);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// JOGO ATIVO — router
+// ═══════════════════════════════════════════════════════════════════
+function iniciarJogo() {
+  document.getElementById('jogo-rps').className   = jogoAtivoAnterior === 'rps'   ? 'rps-wrap' : 'rps-wrap hidden';
+  document.getElementById('jogo-dados').className = jogoAtivoAnterior === 'dados' ? 'rps-wrap' : 'rps-wrap hidden';
+  if (jogoAtivoAnterior === 'rps')   iniciarRPS();
+  if (jogoAtivoAnterior === 'dados') iniciarDados();
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -656,7 +834,7 @@ function aguardarJogadorB() {
 var EMOJI = { pedra: '🪨', papel: '📄', tesoura: '✂️' };
 var NOMES = { pedra: 'pedra', papel: 'papel', tesoura: 'tesoura' };
 
-function iniciarJogo() {
+function iniciarRPS() {
   rpsEscolha = null;
   rpsRevelado = false;
   renderRPS();
@@ -744,6 +922,99 @@ function renderRPS() {
   document.getElementById('rps-result').className = 'rps-result hidden';
   document.getElementById('btn-nova-rodada').className = 'nova-rodada-btn hidden';
   document.getElementById('rps-waiting').innerHTML = rpsEscolha ? 'aguardando oponente...' : '';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DADOS
+// ═══════════════════════════════════════════════════════════════════
+var FACES = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+var dadosScoreEu = 0;
+var dadosScoreOp = 0;
+var dadosRolou = false;
+var dadosPollingTimer = null;
+
+function iniciarDados() {
+  dadosRolou = false;
+  dadosScoreEu = 0; dadosScoreOp = 0;
+  document.getElementById('dado-eu').innerHTML = '⚀';
+  document.getElementById('dados-score-eu').innerHTML = '0';
+  document.getElementById('dados-score-op').innerHTML = '0';
+  document.getElementById('dados-result').className = 'rps-result hidden';
+  document.getElementById('btn-nova-rodada-dados').className = 'nova-rodada-btn hidden';
+  document.getElementById('dados-waiting').innerHTML = '';
+  document.getElementById('btn-rolar').disabled = false;
+  dbPatch(sala + '/dados', { valorA: null, valorB: null });
+  if (dadosPollingTimer) clearInterval(dadosPollingTimer);
+  dadosPollingTimer = setInterval(pollDados, 1200);
+}
+
+function dadosRolar() {
+  if (dadosRolou) return;
+  dadosRolou = true;
+  document.getElementById('btn-rolar').disabled = true;
+
+  // animação rápida
+  var frames = 0;
+  var anim = setInterval(function() {
+    document.getElementById('dado-eu').innerHTML = FACES[Math.floor(Math.random() * 6)];
+    if (++frames >= 8) {
+      clearInterval(anim);
+      var valor = Math.floor(Math.random() * 6) + 1;
+      document.getElementById('dado-eu').innerHTML = FACES[valor - 1];
+      var chave = papel === 'a' ? 'valorA' : 'valorB';
+      var patch = {};
+      patch[chave] = valor;
+      dbPatch(sala + '/dados', patch);
+      document.getElementById('dados-waiting').innerHTML = 'aguardando oponente...';
+    }
+  }, 80);
+}
+
+function pollDados() {
+  dbGet(sala + '/dados', function(data) {
+    if (!data) return;
+    var va = data.valorA || null;
+    var vb = data.valorB || null;
+    if (va && vb) {
+      clearInterval(dadosPollingTimer);
+      revelarDados(va, vb);
+    }
+  });
+}
+
+function revelarDados(va, vb) {
+  var meuValor = papel === 'a' ? va : vb;
+  var opValor  = papel === 'a' ? vb : va;
+
+  var ganhei = meuValor > opValor;
+  var empate = meuValor === opValor;
+
+  if (ganhei) dadosScoreEu++;
+  else if (!empate) dadosScoreOp++;
+
+  document.getElementById('dados-score-eu').innerHTML = dadosScoreEu;
+  document.getElementById('dados-score-op').innerHTML = dadosScoreOp;
+  document.getElementById('dado-eu').innerHTML = FACES[meuValor - 1];
+
+  var res = document.getElementById('dados-result');
+  res.className = 'rps-result';
+  document.getElementById('dados-result-text').innerHTML = empate ? 'empate!' : (ganhei ? 'você ganhou!' : 'você perdeu!');
+  document.getElementById('dados-choices-display').innerHTML = 'você: ' + meuValor + '  oponente: ' + opValor;
+
+  document.getElementById('dados-waiting').innerHTML = '';
+  document.getElementById('btn-nova-rodada-dados').className = 'nova-rodada-btn';
+}
+
+function dadosNovaRodada() {
+  dadosRolou = false;
+  document.getElementById('dado-eu').innerHTML = '⚀';
+  document.getElementById('dados-result').className = 'rps-result hidden';
+  document.getElementById('btn-nova-rodada-dados').className = 'nova-rodada-btn hidden';
+  document.getElementById('dados-waiting').innerHTML = '';
+  document.getElementById('btn-rolar').disabled = false;
+  dbPatch(sala + '/dados', { valorA: null, valorB: null });
+  if (dadosPollingTimer) clearInterval(dadosPollingTimer);
+  dadosPollingTimer = setInterval(pollDados, 1200);
 }
 </script>
 </body>
