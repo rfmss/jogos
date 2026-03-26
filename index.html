@@ -424,12 +424,12 @@ body.standalone .app { padding-top: 44px; }
   -webkit-flex-shrink:0; flex-shrink:0;
   -webkit-transition:-webkit-transform 0.13s; transition:transform 0.13s;
   -webkit-user-select:none; user-select:none;
-  touch-action:pan-x;
+  touch-action:manipulation;
 }
 .brc-card.red { color:#c0392b; }
 .brc-card.wild { color:#7c3aed; background:#f0ebff; }
 .brc-card.selected { border-color:#2a2a2a; border-width:2.5px; -webkit-transform:translateY(-10px); transform:translateY(-10px); }
-.brc-card.sm { width:28px; height:40px; font-size:9px; border-radius:4px; padding:2px 3px; cursor:default; touch-action:none; }
+.brc-card.sm { width:28px; height:40px; font-size:9px; border-radius:4px; padding:2px 3px; cursor:default; touch-action:auto; }
 .brc-card.dc { width:50px; height:68px; font-size:15px; border-radius:8px; }
 .brc-card.novo { -webkit-animation:brcSlideIn 0.26s ease; animation:brcSlideIn 0.26s ease; }
 .brc-card.voando { -webkit-animation:brcFlyUp 0.22s ease forwards; animation:brcFlyUp 0.22s ease forwards; }
@@ -645,7 +645,8 @@ body.standalone .app { padding-top: 44px; }
       </div>
       <div class="brc-mao" id="brc-mao"></div>
       <div class="brc-controls">
-        <button class="brc-btn" id="brc-btn-jogar" onclick="brcJogar()">jogar</button>
+        <button class="brc-btn sec" id="brc-btn-desc" onclick="brcDescartar()">descartar</button>
+        <button class="brc-btn" id="brc-btn-baixar" onclick="brcBaixar()">baixar</button>
       </div>
       <div class="brc-status" id="brc-status"></div>
     </div>
@@ -1213,32 +1214,40 @@ var brcPollTimer = null;
 var brcLastV = -1;
 var brcNewCardId = null;
 
-// ── Touch drag-to-discard ──────────────────────────────────────────
-var _brcTY0=null, _brcTX0=null, _brcTMov=false, _brcTEl=null, _brcBlockClick=false;
+// ── Touch swipe-to-discard ─────────────────────────────────────────
+// Simples: track Y0 no touchstart, calcular dy no touchend.
+// dy < -30 = deslizou para cima = descartar
+// |dy| < 12 = tap = selecionar
+var _brcTY0 = null;
+var _brcTEl  = null;
+var _brcBlk  = false;
 
-function brcTS(e,id) {
-  _brcTY0=e.touches[0].clientY; _brcTX0=e.touches[0].clientX;
-  _brcTMov=false; _brcTEl=e.currentTarget;
+function brcTS(e, id) {
+  _brcTY0 = e.touches[0].clientY;
+  _brcTEl = e.currentTarget;
 }
 function brcTM(e) {
-  if (_brcTY0===null) return;
-  var dy=e.touches[0].clientY-_brcTY0;
-  var dx=e.touches[0].clientX-_brcTX0;
-  if (dy<-10&&Math.abs(dy)>Math.abs(dx)) {
-    _brcTMov=true; e.preventDefault();
-    if (_brcTEl) { _brcTEl.style.webkitTransform='translateY('+dy+'px)'; _brcTEl.style.transform='translateY('+dy+'px)'; }
+  if (_brcTY0 === null || !_brcTEl) return;
+  var dy = e.touches[0].clientY - _brcTY0;
+  if (dy < 0) {
+    e.preventDefault();
+    _brcTEl.style.webkitTransform = 'translateY('+dy+'px)';
+    _brcTEl.style.transform       = 'translateY('+dy+'px)';
   }
 }
-function brcTE(e,id) {
-  var dy=_brcTY0!==null?e.changedTouches[0].clientY-_brcTY0:0;
-  var moved=_brcTMov;
+function brcTE(e, id) {
+  var dy = _brcTY0 !== null ? e.changedTouches[0].clientY - _brcTY0 : 0;
   if (_brcTEl) { _brcTEl.style.webkitTransform=''; _brcTEl.style.transform=''; }
-  _brcTY0=null; _brcTMov=false; _brcTEl=null;
-  _brcBlockClick=true; setTimeout(function(){ _brcBlockClick=false; },400);
-  if (moved&&dy<-48) { brcDescartarById(id); }
-  else if (!moved) { brcTogCard(id); }
+  _brcTY0 = null; _brcTEl = null;
+  _brcBlk = true; setTimeout(function(){ _brcBlk=false; }, 400);
+  if (dy < -30) {
+    brcDescartarById(id);   // deslizou para cima → descartar
+  } else if (dy > -12) {
+    brcTogCard(id);         // tap → selecionar
+  }
+  // gesture ambíguo (entre -12 e -30): ignora
 }
-function brcCardClick(id) { if (!_brcBlockClick) brcTogCard(id); }
+function brcCardClick(id) { if (!_brcBlk) brcTogCard(id); }
 
 function brcBaralho() {
   var cards = [], id = 0;
@@ -1385,15 +1394,18 @@ function brcRender(est) {
   brcRenderMao(mao||[]);
 
   el=document.getElementById('brc-stock-btn'); if(el) el.disabled=!mVez||est.fase!=='comprar';
-  el=document.getElementById('brc-btn-jogar');
+
+  // "descartar": habilitado quando é sua vez, fase jogar, exatamente 1 carta selecionada
+  el=document.getElementById('brc-btn-desc');
+  if(el) el.disabled = !mVez || est.fase!=='jogar' || brcSel.length!==1;
+
+  // "baixar": habilitado quando é sua vez, fase jogar, e tem seleção válida para meld
+  var podeBaixar = mVez && est.fase==='jogar' &&
+    (brcMeldSel!==null ? brcSel.length>0 : brcSel.length>=3);
+  el=document.getElementById('brc-btn-baixar');
   if(el){
-    el.disabled=!mVez||est.fase!=='jogar';
-    if(mVez&&est.fase==='jogar'){
-      if(brcMeldSel!==null) el.innerHTML='adicionar';
-      else if(brcSel.length===1) el.innerHTML='descartar';
-      else if(brcSel.length>=3) el.innerHTML='baixar';
-      else el.innerHTML='jogar';
-    } else { el.innerHTML='jogar'; }
+    el.disabled = !podeBaixar;
+    el.innerHTML = brcMeldSel!==null ? 'adicionar' : 'baixar';
   }
 
   if (est.fim) {
@@ -1414,13 +1426,20 @@ function brcRender(est) {
   if (!mortoU&&(mao||[]).length===0&&est.fase==='jogar') { brcPegarMorto(est); return; }
 
   var msg='';
-  if (!mVez) { msg='vez do oponente...'; }
-  else if (est.fase==='comprar') { msg='compre do monte  ou do descarte'; }
-  else if (brcMeldSel!==null) { msg=brcSel.length?'selecione "adicionar"':'toque nas cartas para adicionar'; }
-  else if (brcSel.length===1) { msg='deslize ↑ para descartar ou selecione mais cartas'; }
-  else if (brcSel.length>=3) { msg='toque "baixar" para jogar o meld'; }
-  else { msg='toque para selecionar  •  deslize ↑ para descartar'; }
-  if (!mortoU&&(morto||[]).length>0) msg=msg+' • morto disponível';
+  if (!mVez) {
+    msg = 'vez do oponente...';
+  } else if (est.fase==='comprar') {
+    msg = 'toque no monte ou no descarte para comprar';
+  } else if (brcMeldSel!==null) {
+    msg = brcSel.length ? 'toque "adicionar"' : 'selecione cartas para adicionar ao meld';
+  } else if (brcSel.length===1) {
+    msg = 'toque "descartar"  ou deslize a carta para cima';
+  } else if (brcSel.length>=3) {
+    msg = 'toque "baixar" para jogar o meld';
+  } else {
+    msg = 'toque uma carta para selecionar  •  deslize para cima para descartar';
+  }
+  if (!mortoU && (morto||[]).length > 0) { msg = msg + ' • morto disponível'; }
   brcSetStatus(msg);
 }
 
@@ -1519,7 +1538,8 @@ function brcComprarDescarte() {
   setTimeout(function(){ brcNewCardId=null; },400);
 }
 
-function brcJogar() {
+// Baixar: forma meld ou adiciona a meld existente
+function brcBaixar() {
   var est=brcEst;
   if (!est||est.turno!==papel||est.fase!=='jogar') return;
   var mao=(papel==='a'?est.maoA:est.maoB).slice();
@@ -1528,26 +1548,33 @@ function brcJogar() {
   for (var i=0;i<mao.length;i++) {
     if (brcSel.indexOf(mao[i].id)>=0) sel.push(mao[i]); else rest.push(mao[i]);
   }
-  // 1 carta selecionada sem meld = descartar
-  if (brcMeldSel===null&&sel.length===1) { brcDescartarById(sel[0].id); return; }
-
   if (brcMeldSel!==null) {
-    if (!sel.length) { brcSetStatus('selecione cartas para adicionar'); return; }
+    // Adicionar a meld existente
+    if (!sel.length) { toast('selecione cartas para adicionar'); return; }
     if (brcMeldSel>=meus.length) return;
     var ext=meus[brcMeldSel].concat(sel);
-    if (!brcValMeld(ext)) { brcSetStatus('combinação inválida para esse meld'); return; }
+    if (!brcValMeld(ext)) { toast('combinação inválida para esse meld'); return; }
     meus[brcMeldSel]=ext;
   } else {
-    if (sel.length<3) { brcSetStatus('selecione 3+ cartas para baixar'); return; }
-    if (!brcValMeld(sel)) { brcSetStatus('meld inválido — mesma patente ou sequência'); return; }
+    // Novo meld
+    if (sel.length<3) { toast('mínimo 3 cartas'); return; }
+    if (!brcValMeld(sel)) { toast('meld inválido — mesma patente ou sequência'); return; }
     meus.push(sel);
   }
   var ne=brcClone(est);
-  if (papel==='a'){ ne.maoA=rest; ne.canastrasA=meus; } else { ne.maoB=rest; ne.canastrasB=meus; }
+  if (papel==='a'){ ne.maoA=rest; ne.canastrasA=meus; }
+  else            { ne.maoB=rest; ne.canastrasB=meus; }
   ne.v=Date.now(); brcSel=[]; brcMeldSel=null;
   brcEst=ne; brcSave(ne); brcRender(ne);
 }
 
+// Descartar: botão explícito — descarta a 1 carta selecionada
+function brcDescartar() {
+  if (brcSel.length!==1) { toast('selecione 1 carta para descartar'); return; }
+  brcDescartarById(brcSel[0]);
+}
+
+// Descarta carta por id (usado pelo botão e pelo swipe)
 function brcDescartarById(id) {
   var est=brcEst;
   if (!est||est.turno!==papel||est.fase!=='jogar') return;
