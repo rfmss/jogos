@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="jogos">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6b9ab8">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="icon-blue.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-blue.png">
+<script>(function(){var P=[{n:'terra',h:'#cd7b5f'},{n:'olive',h:'#6e7a4e'},{n:'rose',h:'#c4708a'},{n:'lavender',h:'#9b8fc4'},{n:'blue',h:'#6b9ab8'},{n:'sage',h:'#8fb3ae'}];var c=P[Math.floor(Math.random()*P.length)];var q=document.querySelector.bind(document);var e;e=q('meta[name="theme-color"]');if(e)e.setAttribute('content',c.h);e=q('link[rel="apple-touch-icon-precomposed"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');e=q('link[rel="apple-touch-icon"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');var s=document.createElement('style');s.innerHTML='html,body,.app{background:'+c.h+'!important}';document.head.appendChild(s);window._pal=c;})();</script>
+<title>jogos</title>
+<style>
+*, *:before, *:after {
+  -webkit-box-sizing: border-box; box-sizing: border-box;
+  margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html, body {
+  height: 100%;
+  background: #6b9ab8;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #2a2a2a;
+  -webkit-text-size-adjust: 100%;
+  overflow: hidden;
+  -webkit-user-select: none; user-select: none;
+}
+.app {
+  height: 100%;
+  background: #6b9ab8;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+}
+@media all and (display-mode: standalone) { .app { padding-top: 44px; } }
+body.standalone .app { padding-top: 44px; }
+
+/* ── Screens ── */
+.screen { display: none; }
+.screen.on {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+  -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+  overflow: hidden;
+}
+
+/* ══════════════ LOBBY ══════════════ */
+.lobby-wrap {
+  -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  padding: 32px 28px;
+  gap: 0;
+}
+.lobby-title {
+  font-size: 36px; font-weight: 700; letter-spacing: -1px;
+  margin-bottom: 8px; opacity: 0.9;
+}
+.lobby-sub {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0.6; margin-bottom: 48px;
+}
+.lobby-btn {
+  width: 100%;
+  padding: 22px;
+  border-radius: 18px;
+  border: none;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 22px; font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 12px;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  -webkit-transition: -webkit-transform 0.1s; transition: transform 0.1s;
+}
+.lobby-btn:active { -webkit-transform: scale(0.97); transform: scale(0.97); }
+.lobby-btn.primary { background: #2a2a2a; color: #f4ede4; }
+.lobby-btn.secondary { background: rgba(0,0,0,0.15); color: #2a2a2a; }
+.divider {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  opacity: 0.5; margin: 16px 0;
+}
+
+/* Join input */
+.join-wrap {
+  width: 100%;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: horizontal; -webkit-flex-direction: row; flex-direction: row;
+  gap: 10px;
+}
+.code-input {
+  -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 28px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; text-align: center;
+  border: none; border-bottom: 3px solid rgba(0,0,0,0.25);
+  background: transparent; color: #2a2a2a; outline: none;
+  padding: 8px 4px; -webkit-appearance: none; border-radius: 0;
+}
+.code-input:focus { border-bottom-color: rgba(0,0,0,0.6); }
+.code-input::-webkit-input-placeholder { opacity: 0.3; letter-spacing: 0.1em; }
+.join-btn {
+  padding: 10px 20px;
+  border-radius: 14px; border: none;
+  background: #2a2a2a; color: #f4ede4;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer;
+}
+.join-btn:active { opacity: 0.75; }
+
+/* Aguardando */
+.waiting-wrap {
+  -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  padding: 28px; gap: 18px;
+}
+.room-code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 56px; font-weight: 700; letter-spacing: 0.18em;
+  background: rgba(0,0,0,0.12); border-radius: 18px;
+  padding: 16px 28px;
+}
+.waiting-label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  opacity: 0.6;
+}
+.dot-anim { display: inline-block; }
+
+/* ══════════════ SALA (GAME ROOM) ══════════════ */
+.sala-header {
+  padding: 14px 20px 10px;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.sala-code-badge {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; letter-spacing: 0.14em; font-weight: 700;
+  background: rgba(0,0,0,0.15); border-radius: 20px;
+  padding: 5px 12px;
+}
+.sala-players {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  opacity: 0.6;
+}
+.mic-status {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* ══════════════ RPS GAME ══════════════ */
+.rps-wrap {
+  -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  padding: 16px 20px 100px;
+  overflow: hidden;
+}
+.rps-score {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: horizontal; -webkit-flex-direction: row; flex-direction: row;
+  gap: 32px; margin-bottom: 24px;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+}
+.score-block { text-align: center; }
+.score-num {
+  font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1;
+}
+.score-label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0.55; margin-top: 2px;
+}
+.score-sep { font-size: 28px; opacity: 0.3; }
+
+.rps-result-area {
+  min-height: 60px;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  margin-bottom: 20px;
+}
+.rps-result {
+  font-size: 22px; font-weight: 700; text-align: center;
+  background: rgba(0,0,0,0.12); border-radius: 14px;
+  padding: 12px 24px;
+}
+.rps-choices-display {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  opacity: 0.65; margin-top: 6px;
+}
+
+.rps-btns {
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-orient: horizontal; -webkit-flex-direction: row; flex-direction: row;
+  gap: 12px; margin-bottom: 20px;
+}
+.rps-btn {
+  width: 100px; height: 100px;
+  border-radius: 24px; border: none;
+  background: rgba(0,0,0,0.15);
+  font-size: 44px; line-height: 1;
+  cursor: pointer;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  -webkit-transition: -webkit-transform 0.1s; transition: transform 0.1s;
+}
+.rps-btn:active { -webkit-transform: scale(0.88); transform: scale(0.88); }
+.rps-btn.chosen { background: rgba(0,0,0,0.3); border: 3px solid rgba(0,0,0,0.4); }
+.rps-btn:disabled { opacity: 0.4; cursor: default; }
+
+.rps-waiting {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0.6; min-height: 20px;
+}
+
+.nova-rodada-btn {
+  padding: 16px 32px;
+  border-radius: 50px; border: none;
+  background: #2a2a2a; color: #f4ede4;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; margin-top: 8px;
+}
+.nova-rodada-btn:active { opacity: 0.75; }
+.hidden { display: none !important; }
+
+/* ══════════════ MUTE FAB ══════════════ */
+.mute-fab {
+  position: fixed;
+  bottom: 28px; left: 20px;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  z-index: 9999;
+  background: rgba(0,0,0,0.75);
+  color: #f4ede4;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+  -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  -webkit-transition: -webkit-transform 0.1s; transition: transform 0.1s;
+}
+.mute-fab:active { -webkit-transform: scale(0.88); transform: scale(0.88); }
+.mute-fab.muted { background: rgba(180,60,60,0.88); }
+.mute-fab.hidden { display: none; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 110px; left: 50%;
+  -webkit-transform: translateX(-50%) translateY(16px); transform: translateX(-50%) translateY(16px);
+  background: #2a2a2a; color: #f4ede4;
+  font-family: 'Courier New', Courier, monospace; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 10px 20px; border-radius: 40px;
+  opacity: 0; z-index: 9998; pointer-events: none;
+  -webkit-transition: opacity 0.2s, -webkit-transform 0.2s; transition: opacity 0.2s, transform 0.2s;
+}
+.toast.on { opacity: 1; -webkit-transform: translateX(-50%) translateY(0); transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ══ LOBBY ══ -->
+  <div class="screen on" id="screen-lobby">
+    <div class="lobby-wrap">
+      <div class="lobby-title">jogos</div>
+      <div class="lobby-sub">sala de jogos com voz</div>
+      <button class="lobby-btn primary" onclick="criarSala()">
+        criar sala
+      </button>
+      <div class="divider">ou</div>
+      <div class="join-wrap">
+        <input class="code-input" id="inp-code" type="text"
+          placeholder="ABCD" maxlength="4"
+          autocomplete="off" autocorrect="off" autocapitalize="characters"
+          oninput="this.value=this.value.toUpperCase()">
+        <button class="join-btn" onclick="entrarSala()">entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ AGUARDANDO ══ -->
+  <div class="screen" id="screen-waiting">
+    <div class="waiting-wrap">
+      <div class="waiting-label">código da sala</div>
+      <div class="room-code" id="waiting-code">----</div>
+      <div class="waiting-label">
+        aguardando o outro jogador<span class="dot-anim" id="dots"></span>
+      </div>
+      <div class="mic-status" id="mic-status-w"></div>
+    </div>
+  </div>
+
+  <!-- ══ SALA ══ -->
+  <div class="screen" id="screen-sala">
+    <div class="sala-header">
+      <div class="sala-code-badge" id="sala-code-badge">----</div>
+      <div class="mic-status" id="mic-status-s">microfone</div>
+    </div>
+
+    <!-- ── RPS ── -->
+    <div class="rps-wrap" id="jogo-rps">
+      <div class="rps-score">
+        <div class="score-block">
+          <div class="score-num" id="score-eu">0</div>
+          <div class="score-label">você</div>
+        </div>
+        <div class="score-sep">×</div>
+        <div class="score-block">
+          <div class="score-num" id="score-op">0</div>
+          <div class="score-label">oponente</div>
+        </div>
+      </div>
+
+      <div class="rps-result-area">
+        <div class="rps-result hidden" id="rps-result">
+          <div id="rps-result-text"></div>
+          <div class="rps-choices-display" id="rps-choices-display"></div>
+        </div>
+      </div>
+
+      <div class="rps-btns">
+        <button class="rps-btn" id="btn-pedra"   onclick="rpsEscolher('pedra')">🪨</button>
+        <button class="rps-btn" id="btn-papel"   onclick="rpsEscolher('papel')">📄</button>
+        <button class="rps-btn" id="btn-tesoura" onclick="rpsEscolher('tesoura')">✂️</button>
+      </div>
+
+      <div class="rps-waiting" id="rps-waiting"></div>
+      <button class="nova-rodada-btn hidden" id="btn-nova-rodada" onclick="novaRodada()">nova rodada</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- MUTE FAB — fora do .app, sempre por cima -->
+<button class="mute-fab hidden" id="btn-mute" onclick="toggleMute()">
+  <!-- mic on -->
+  <svg id="icon-mic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="26" height="26" fill="currentColor">
+    <path d="M128,176a48.05,48.05,0,0,0,48-48V80a48,48,0,0,0-96,0v48A48.05,48.05,0,0,0,128,176ZM96,80a32,32,0,0,1,64,0v48a32,32,0,0,1-64,0Zm40,117.65V216a8,8,0,0,1-16,0V197.65A80.11,80.11,0,0,1,48,120a8,8,0,1,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,197.65Z"/>
+  </svg>
+  <!-- mic off -->
+  <svg id="icon-mic-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="26" height="26" fill="currentColor" style="display:none">
+    <path d="M213.92,210.62l-160-176A8,8,0,0,0,42.08,45.38L80,87.09V128a48,48,0,0,0,75.08,39.51l10.13,11.15A63.55,63.55,0,0,1,136,197.65V216a8,8,0,0,1-16,0V197.65A80.11,80.11,0,0,1,48,120a8,8,0,0,1,16,0,63.61,63.61,0,0,0,16,42.08V99.09l-42.08-46.3a8,8,0,0,1,11.84-10.76l160,176a8,8,0,1,1-11.84,10.76ZM176,128V80a48,48,0,0,0-81.67-34.25A8,8,0,1,0,105.07,57,32,32,0,0,1,160,80v48a31.58,31.58,0,0,1-2,10.8L171,152.31A47.7,47.7,0,0,0,176,128Zm32-8a8,8,0,0,0-8,8,64.16,64.16,0,0,1-6.24,27.71,8,8,0,1,0,14.4,7A80.15,80.15,0,0,0,216,128,8,8,0,0,0,208,120Z"/>
+  </svg>
+</button>
+
+<!-- Audio remoto (oculto) -->
+<audio id="remote-audio" autoplay playsinline style="display:none"></audio>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var DB = 'https://rfmss-games-default-rtdb.firebaseio.com';
+var STUN_CFG = { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' }
+]};
+
+// ── State ─────────────────────────────────────────────────────────
+var sala = null;
+var papel = null;         // 'a' | 'b'
+var pc = null;            // RTCPeerConnection
+var localStream = null;
+var muted = false;
+var webrtcAtivo = false;
+
+var scoreEu = 0;
+var scoreOp = 0;
+var rpsEscolha = null;    // minha escolha atual
+var rpsRevelado = false;
+var rpsPollingTimer = null;
+var iceBuffer = [];
+var iceAplicados = {};
+
+var dotsTimer = null;
+var waitingTimer = null;
+
+// ── Standalone ────────────────────────────────────────────────────
+if (window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)) {
+  document.body.className = 'standalone';
+}
+
+// ── Palette ───────────────────────────────────────────────────────
+(function() {
+  if (window._pal) { document.getElementById('app').style.background = window._pal.h; }
+})();
+
+// ── XHR helpers ──────────────────────────────────────────────────
+function dbGet(path, cb) {
+  var x = new XMLHttpRequest();
+  x.open('GET', DB + '/salas/' + path + '.json', true);
+  x.onload = function() { try { cb(JSON.parse(x.responseText)); } catch(e) { cb(null); } };
+  x.onerror = function() { cb(null); };
+  x.send();
+}
+function dbPut(path, data, cb) {
+  var x = new XMLHttpRequest();
+  x.open('PUT', DB + '/salas/' + path + '.json', true);
+  x.setRequestHeader('Content-Type', 'application/json');
+  x.onload = function() { if (cb) cb(); };
+  x.onerror = function() { if (cb) cb(); };
+  x.send(JSON.stringify(data));
+}
+function dbPatch(path, data, cb) {
+  var x = new XMLHttpRequest();
+  x.open('PATCH', DB + '/salas/' + path + '.json', true);
+  x.setRequestHeader('Content-Type', 'application/json');
+  x.onload = function() { if (cb) cb(); };
+  x.onerror = function() { if (cb) cb(); };
+  x.send(JSON.stringify(data));
+}
+
+// ── Lobby helpers ─────────────────────────────────────────────────
+function gerarCodigo() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  var code = '';
+  for (var i = 0; i < 4; i++) { code += chars[Math.floor(Math.random() * chars.length)]; }
+  return code;
+}
+
+function mostrarTela(id) {
+  var telas = ['screen-lobby','screen-waiting','screen-sala'];
+  for (var i = 0; i < telas.length; i++) {
+    document.getElementById(telas[i]).className = telas[i] === id ? 'screen on' : 'screen';
+  }
+}
+
+// ── Dots animation ────────────────────────────────────────────────
+function startDots(elId) {
+  var el = document.getElementById(elId);
+  var n = 0;
+  stopDots();
+  dotsTimer = setInterval(function() {
+    n = (n + 1) % 4;
+    var s = '';
+    for (var i = 0; i < n; i++) s += '.';
+    if (el) el.innerHTML = s;
+  }, 500);
+}
+function stopDots() { clearInterval(dotsTimer); }
+
+// ── Toast ─────────────────────────────────────────────────────────
+var toastTimer = null;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.innerHTML = msg;
+  el.className = 'toast on';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.className = 'toast'; }, 2400);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MICROPHONE + WebRTC
+// ═══════════════════════════════════════════════════════════════════
+function setupMic(cb) {
+  var api = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+    ? function(ok, err) { navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(ok).catch(err); }
+    : (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia)
+      ? function(ok, err) { (navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia).call(navigator,{audio:true,video:false},ok,err); }
+      : null;
+  if (!api) { setMicStatus('sem suporte ao mic'); cb(false); return; }
+  api(function(stream) { localStream = stream; cb(true); },
+      function() { setMicStatus('microfone negado'); cb(false); });
+}
+
+function setMicStatus(msg) {
+  var els = ['mic-status-w','mic-status-s'];
+  for (var i = 0; i < els.length; i++) {
+    var el = document.getElementById(els[i]);
+    if (el) el.innerHTML = msg;
+  }
+}
+
+function initWebRTC(isHost) {
+  if (!window.RTCPeerConnection) { setMicStatus('voz indisponível'); return; }
+  pc = new RTCPeerConnection(STUN_CFG);
+
+  if (localStream) {
+    var tracks = localStream.getTracks();
+    for (var i = 0; i < tracks.length; i++) { pc.addTrack(tracks[i], localStream); }
+  }
+
+  pc.ontrack = function(e) {
+    var audio = document.getElementById('remote-audio');
+    if (e.streams && e.streams[0]) { audio.srcObject = e.streams[0]; }
+  };
+
+  pc.onicecandidate = function(e) {
+    if (!e.candidate) return;
+    iceBuffer.push(e.candidate.toJSON());
+    var iceKey = papel === 'a' ? 'iceA' : 'iceB';
+    var data = {};
+    for (var i = 0; i < iceBuffer.length; i++) { data[i] = iceBuffer[i]; }
+    dbPut(sala + '/signal/' + iceKey, data);
+  };
+
+  pc.onconnectionstatechange = function() {
+    var s = pc.connectionState;
+    if (s === 'connected') { setMicStatus('voz conectada'); webrtcAtivo = true; }
+    else if (s === 'connecting') setMicStatus('conectando voz...');
+    else if (s === 'failed' || s === 'disconnected') setMicStatus('voz desconectada');
+  };
+
+  if (isHost) {
+    pc.createOffer({offerToReceiveAudio:true}).then(function(offer) {
+      return pc.setLocalDescription(offer);
+    }).then(function() {
+      dbPut(sala + '/signal/offer', {type:pc.localDescription.type, sdp:pc.localDescription.sdp});
+      setMicStatus('aguardando voz...');
+      esperarAnswer();
+    });
+  } else {
+    dbGet(sala + '/signal/offer', function(offer) {
+      if (!offer) { setMicStatus('erro: sem offer'); return; }
+      pc.setRemoteDescription(new RTCSessionDescription(offer)).then(function() {
+        return pc.createAnswer();
+      }).then(function(ans) {
+        return pc.setLocalDescription(ans);
+      }).then(function() {
+        dbPut(sala + '/signal/answer', {type:pc.localDescription.type, sdp:pc.localDescription.sdp});
+        setMicStatus('conectando voz...');
+      });
+    });
+  }
+  startIcePolling();
+  document.getElementById('btn-mute').className = 'mute-fab';
+}
+
+function esperarAnswer() {
+  var tries = 0;
+  var t = setInterval(function() {
+    if (++tries > 120 || !pc || pc.remoteDescription) { clearInterval(t); return; }
+    dbGet(sala + '/signal/answer', function(ans) {
+      if (!ans || !pc || pc.remoteDescription) return;
+      clearInterval(t);
+      pc.setRemoteDescription(new RTCSessionDescription(ans)).catch(function(){});
+    });
+  }, 1000);
+}
+
+function startIcePolling() {
+  var remoteKey = papel === 'a' ? 'iceB' : 'iceA';
+  setInterval(function() {
+    if (!pc || pc.signalingState === 'closed') return;
+    dbGet(sala + '/signal/' + remoteKey, function(candidates) {
+      if (!candidates) return;
+      var keys = Object.keys(candidates);
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if (!iceAplicados[k]) {
+          iceAplicados[k] = true;
+          try { pc.addIceCandidate(new RTCIceCandidate(candidates[k])).catch(function(){}); } catch(e) {}
+        }
+      }
+    });
+  }, 1200);
+}
+
+// ── Mute toggle ───────────────────────────────────────────────────
+function toggleMute() {
+  muted = !muted;
+  if (localStream) {
+    var tracks = localStream.getAudioTracks();
+    for (var i = 0; i < tracks.length; i++) { tracks[i].enabled = !muted; }
+  }
+  document.getElementById('icon-mic').style.display     = muted ? 'none' : '';
+  document.getElementById('icon-mic-off').style.display = muted ? ''     : 'none';
+  document.getElementById('btn-mute').className = muted ? 'mute-fab muted' : 'mute-fab';
+  toast(muted ? 'microfone mutado' : 'microfone ativo');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CRIAR / ENTRAR NA SALA
+// ═══════════════════════════════════════════════════════════════════
+function criarSala() {
+  sala = gerarCodigo();
+  papel = 'a';
+  document.getElementById('waiting-code').innerHTML = sala;
+  mostrarTela('screen-waiting');
+  startDots('dots');
+
+  dbPut(sala, { criado: Date.now(), estado: 'aguardando', jogo: 'rps', rps: { escolhaA: null, escolhaB: null } });
+
+  setupMic(function(ok) {
+    if (ok) setMicStatus('microfone pronto');
+    aguardarJogadorB();
+  });
+}
+
+function entrarSala() {
+  var code = document.getElementById('inp-code').value.trim().toUpperCase();
+  if (code.length !== 4) { toast('código tem 4 letras'); return; }
+  sala = code;
+  papel = 'b';
+
+  dbGet(sala + '/estado', function(estado) {
+    if (!estado) { toast('sala não encontrada'); sala = null; papel = null; return; }
+    if (estado === 'jogando') { toast('sala já em jogo'); sala = null; papel = null; return; }
+
+    dbPatch(sala, { estado: 'jogando' });
+    mostrarTela('screen-sala');
+    document.getElementById('sala-code-badge').innerHTML = sala;
+    iniciarJogo();
+
+    setupMic(function(ok) {
+      if (ok) { initWebRTC(false); }
+      else { document.getElementById('btn-mute').className = 'mute-fab'; }
+    });
+  });
+}
+
+function aguardarJogadorB() {
+  var tries = 0;
+  waitingTimer = setInterval(function() {
+    if (++tries > 300) { clearInterval(waitingTimer); toast('tempo esgotado'); mostrarTela('screen-lobby'); return; }
+    dbGet(sala + '/estado', function(estado) {
+      if (estado === 'jogando') {
+        clearInterval(waitingTimer);
+        stopDots();
+        mostrarTela('screen-sala');
+        document.getElementById('sala-code-badge').innerHTML = sala;
+        iniciarJogo();
+        initWebRTC(true);
+      }
+    });
+  }, 1500);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PEDRA PAPEL TESOURA
+// ═══════════════════════════════════════════════════════════════════
+var EMOJI = { pedra: '🪨', papel: '📄', tesoura: '✂️' };
+var NOMES = { pedra: 'pedra', papel: 'papel', tesoura: 'tesoura' };
+
+function iniciarJogo() {
+  rpsEscolha = null;
+  rpsRevelado = false;
+  renderRPS();
+  if (rpsPollingTimer) clearInterval(rpsPollingTimer);
+  rpsPollingTimer = setInterval(pollRPS, 1200);
+}
+
+function rpsEscolher(opcao) {
+  if (rpsEscolha || rpsRevelado) return;
+  rpsEscolha = opcao;
+
+  var chave = papel === 'a' ? 'escolhaA' : 'escolhaB';
+  var patch = {};
+  patch[chave] = opcao;
+  dbPatch(sala + '/rps', patch);
+
+  renderRPS();
+  document.getElementById('rps-waiting').innerHTML = 'aguardando oponente...';
+}
+
+function pollRPS() {
+  dbGet(sala + '/rps', function(data) {
+    if (!data) return;
+    var ea = data.escolhaA || null;
+    var eb = data.escolhaB || null;
+    if (ea && eb && !rpsRevelado) {
+      rpsRevelado = true;
+      revelarRPS(ea, eb);
+    }
+  });
+}
+
+function revelarRPS(ea, eb) {
+  var minhaEscolha = papel === 'a' ? ea : eb;
+  var opEscolha    = papel === 'a' ? eb : ea;
+
+  var venc = rpsVencedor(ea, eb);
+  var ganhei = (papel === 'a' && venc === 'a') || (papel === 'b' && venc === 'b');
+  var empate = venc === 'empate';
+
+  if (ganhei) { scoreEu++; }
+  else if (!empate) { scoreOp++; }
+
+  document.getElementById('score-eu').innerHTML = scoreEu;
+  document.getElementById('score-op').innerHTML = scoreOp;
+
+  var resultEl = document.getElementById('rps-result');
+  var resultText = document.getElementById('rps-result-text');
+  var choicesEl = document.getElementById('rps-choices-display');
+
+  resultEl.className = 'rps-result';
+  resultText.innerHTML = empate ? 'empate!' : (ganhei ? 'você ganhou!' : 'você perdeu!');
+  choicesEl.innerHTML = 'você: ' + EMOJI[minhaEscolha] + '  oponente: ' + EMOJI[opEscolha];
+
+  document.getElementById('rps-waiting').innerHTML = '';
+  document.getElementById('btn-nova-rodada').className = 'nova-rodada-btn';
+
+  var btns = ['btn-pedra','btn-papel','btn-tesoura'];
+  for (var i = 0; i < btns.length; i++) {
+    document.getElementById(btns[i]).disabled = true;
+  }
+}
+
+function rpsVencedor(a, b) {
+  if (a === b) return 'empate';
+  if ((a==='pedra'&&b==='tesoura')||(a==='papel'&&b==='pedra')||(a==='tesoura'&&b==='papel')) return 'a';
+  return 'b';
+}
+
+function novaRodada() {
+  rpsEscolha = null;
+  rpsRevelado = false;
+  dbPatch(sala + '/rps', { escolhaA: null, escolhaB: null });
+  renderRPS();
+}
+
+function renderRPS() {
+  var btns = ['btn-pedra','btn-papel','btn-tesoura'];
+  var opcoes = ['pedra','papel','tesoura'];
+  for (var i = 0; i < btns.length; i++) {
+    var el = document.getElementById(btns[i]);
+    el.disabled = !!rpsEscolha;
+    el.className = (rpsEscolha === opcoes[i]) ? 'rps-btn chosen' : 'rps-btn';
+  }
+  document.getElementById('rps-result').className = 'rps-result hidden';
+  document.getElementById('btn-nova-rodada').className = 'nova-rodada-btn hidden';
+  document.getElementById('rps-waiting').innerHTML = rpsEscolha ? 'aguardando oponente...' : '';
+}
+</script>
+</body>
+</html>
