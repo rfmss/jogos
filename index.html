@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="icon-blue.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-blue.png">
-<script>(function(){var P=[{n:'terra',h:'#cd7b5f'},{n:'olive',h:'#6e7a4e'},{n:'rose',h:'#c4708a'},{n:'lavender',h:'#9b8fc4'},{n:'blue',h:'#6b9ab8'},{n:'sage',h:'#8fb3ae'}];var c=P[Math.floor(Math.random()*P.length)];var q=document.querySelector.bind(document);var e;e=q('meta[name="theme-color"]');if(e)e.setAttribute('content',c.h);e=q('link[rel="apple-touch-icon-precomposed"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');e=q('link[rel="apple-touch-icon"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');var s=document.createElement('style');s.innerHTML='html,body,.app{background:'+c.h+'!important}';document.head.appendChild(s);window._pal=c;})();</script>
+<script>(function(){var P=[{n:'terra',h:'#cd7b5f'},{n:'olive',h:'#6e7a4e'},{n:'rose',h:'#c4708a'},{n:'lavender',h:'#9b8fc4'},{n:'blue',h:'#6b9ab8'},{n:'sage',h:'#8fb3ae'}];var c=P[Math.floor(Math.random()*P.length)];var q=document.querySelector.bind(document);var e;e=q('meta[name="theme-color"]');if(e)e.setAttribute('content',c.h);e=q('link[rel="apple-touch-icon-precomposed"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');e=q('link[rel="apple-touch-icon"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');var s=document.createElement('style');s.innerHTML='html,body,.app,.brc-right{background:'+c.h+'!important}';document.head.appendChild(s);window._pal=c;})();</script>
 <title>jogos</title>
 <style>
 *, *:before, *:after {
@@ -373,46 +373,49 @@ body.standalone .app { padding-top: 44px; }
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
   overflow:hidden;
 }
-/* portrait: left=tabela cresce, right=mao natural */
+/* LAYER: tabela (normal flow, cresce) */
 .brc-left {
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
   -webkit-box-flex:1; -webkit-flex:1; flex:1;
   min-height:0; overflow:hidden;
+  padding-bottom:112px; /* espaço para mão fixada embaixo */
 }
+/* LAYER: mão — position:fixed, sempre por cima, sem clipping */
 .brc-right {
+  position:fixed;
+  bottom:0; left:0; right:0;
+  z-index:200;
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
   -webkit-flex-shrink:0; flex-shrink:0;
 }
-/* landscape phone: split esquerda/direita */
+.brc-mao {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  padding:8px 12px 6px; gap:5px; -webkit-flex-shrink:0; flex-shrink:0;
+}
+/* landscape phone: coluna direita fixa */
 @media screen and (max-height:500px) and (orientation:landscape) {
-  .brc-outer {
-    -webkit-box-orient:horizontal !important;
-    -webkit-flex-direction:row !important; flex-direction:row !important;
-  }
   .brc-left {
-    -webkit-box-flex:1; -webkit-flex:1; flex:1;
-    border-right:1px solid rgba(0,0,0,0.1);
-    min-height:0;
+    padding-bottom:0;
+    margin-right:152px;
   }
   .brc-right {
-    -webkit-flex:0 0 148px; flex:0 0 148px;
-    -webkit-box-flex:0;
-    border-left:none;
-    overflow:hidden;
+    top:0; right:0; bottom:0;
+    left:auto; width:152px;
+    border-left:1px solid rgba(0,0,0,0.12);
   }
   .brc-mao {
-    -webkit-box-orient:vertical !important;
-    -webkit-flex-direction:column !important; flex-direction:column !important;
-    overflow-x:hidden !important; overflow-y:auto !important;
-    -webkit-box-flex:1 !important; -webkit-flex:1 !important; flex:1 !important;
-    gap:3px !important; padding:6px 8px !important;
-    -webkit-box-align:center !important; -webkit-align-items:center !important; align-items:center !important;
+    -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+    overflow-x:hidden; overflow-y:auto;
+    -webkit-box-flex:1; -webkit-flex:1; flex:1;
+    gap:3px; padding:6px 8px;
+    -webkit-box-align:center; -webkit-align-items:center; align-items:center;
   }
   .brc-mao .brc-card.selected {
-    -webkit-transform:translateX(-8px) translateY(0) !important;
-    transform:translateX(-8px) translateY(0) !important;
+    -webkit-transform:translateX(-8px); transform:translateX(-8px);
   }
   .brc-status { font-size:9px; padding:3px 6px 6px; }
   .brc-op-bar { padding:4px 10px; font-size:10px; }
@@ -1377,99 +1380,83 @@ var brcLastV = -1;
 var brcNewCardId = null;
 
 // ── Touch system ──────────────────────────────────────────────────
-var _brcTSX = 0, _brcTSY = 0;
-var _brcTMode = null;   // 'tap'|'swipe-up'|'free'|'reorder'
-var _brcTId = null;
-var _brcTEl = null;
-var _brcGhost = null;
-var _brcGOffX = 0, _brcGOffY = 0;
-var _brcTCurIdx = -1, _brcTSrcIdx = -1;
-var _brcDropCur = null;
-var _brcBlk = false;
-var _brcScrMode = false;
+// ── Unified drag/touch/mouse system ───────────────────────────────
+var _brcSX = 0, _brcSY = 0;
+var _brcMode = null;   // null | 'tap' | 'scroll' | 'drag'
+var _brcId = null, _brcEl = null;
+var _brcDragIds = [];
+var _brcGhost = null, _brcGOffX = 0, _brcGOffY = 0;
 
+function _brcBegin(x, y, id, el) {
+  _brcSX = x; _brcSY = y;
+  _brcId = id; _brcEl = el;
+  _brcMode = 'tap';
+}
+
+function _brcStep(x, y) {
+  if (!_brcMode) return false;
+  var dx = x - _brcSX, dy = y - _brcSY;
+  var adx = dx < 0 ? -dx : dx, ady = dy < 0 ? -dy : dy;
+  if (_brcMode === 'tap') {
+    if (adx < 8 && ady < 8) return false;
+    if (adx >= ady * 1.3) { _brcMode = 'scroll'; return false; }
+    _brcMode = 'drag';
+    var ids = brcSel.indexOf(_brcId) >= 0 ? brcSel.slice() : [_brcId];
+    _brcMkGhost(_brcEl, ids, x, y);
+  }
+  if (_brcMode === 'drag') {
+    _brcGhostXY(x, y);
+    _brcHint(x, y);
+    return true;
+  }
+  return false;
+}
+
+function _brcFinish(x, y) {
+  var dy = y - _brcSY;
+  var mode = _brcMode;
+  _brcMode = null;
+  _brcKillGhost();
+  _brcClearHint();
+  if (mode === 'tap') { brcTogCard(_brcId); }
+  else if (mode === 'drag') { _brcDrop(x, y, dy); }
+}
+
+// Touch handlers
 function brcCardTS(e, id) {
-  if (e.touches.length >= 2) { _brcScrMode = true; _brcTMode = null; return; }
-  _brcScrMode = false;
+  if (e.touches.length >= 2) { _brcMode = null; return; }
   var t = e.touches[0];
-  _brcTSX = t.clientX; _brcTSY = t.clientY;
-  _brcTId = id; _brcTEl = e.currentTarget;
-  _brcTMode = 'tap';
+  _brcBegin(t.clientX, t.clientY, id, e.currentTarget);
 }
-
 function brcCardTM(e, id) {
-  if (_brcScrMode || _brcTMode === null) return;
+  if (!_brcMode || _brcMode === 'scroll') return;
   var t = e.touches[0];
-  var dx = t.clientX - _brcTSX;
-  var dy = t.clientY - _brcTSY;
-  var adx = dx < 0 ? -dx : dx;
-  var ady = dy < 0 ? -dy : dy;
-
-  if (_brcTMode === 'tap') {
-    if (adx < 7 && ady < 7) return;
-    var isSel = brcSel.indexOf(id) >= 0;
-    if (adx > ady * 1.5 && adx > 10) {
-      _brcTMode = 'reorder';
-      _brcTSrcIdx = brcHandIdx(id);
-      _brcTCurIdx = _brcTSrcIdx;
-      if (_brcTEl) { _brcTEl.className += ' dragging'; }
-    } else if (isSel && ady > 7) {
-      _brcTMode = 'free';
-      brcMakeGhost(_brcTEl, t.clientX, t.clientY);
-    } else {
-      _brcTMode = 'swipe-up';
-    }
-  }
-
-  e.preventDefault();
-
-  if (_brcTMode === 'swipe-up') {
-    if (dy < 0 && _brcTEl) {
-      _brcTEl.style.webkitTransform = 'translateY('+dy+'px)';
-      _brcTEl.style.transform = 'translateY('+dy+'px)';
-    }
-  } else if (_brcTMode === 'reorder') {
-    brcReorderStep(t.clientX);
-  } else if (_brcTMode === 'free') {
-    brcGhostMove(t.clientX, t.clientY);
-    brcDropHint(t.clientX, t.clientY);
-  }
+  if (_brcStep(t.clientX, t.clientY)) e.preventDefault();
 }
-
 function brcCardTE(e, id) {
-  if (_brcScrMode) { _brcScrMode = false; return; }
   var t = e.changedTouches[0];
-  var dy = t.clientY - _brcTSY;
-  var mode = _brcTMode;
-  _brcTMode = null;
-
-  if (mode === 'tap') {
-    _brcBlk = true; setTimeout(function(){ _brcBlk = false; }, 300);
-    brcTogCard(id);
-    return;
-  }
-  if (mode === 'swipe-up') {
-    if (_brcTEl) { _brcTEl.style.webkitTransform=''; _brcTEl.style.transform=''; }
-    if (dy < -30) brcDescartarById(id);
-    return;
-  }
-  if (mode === 'reorder') {
-    brcKillDropCursor();
-    if (_brcTEl) { _brcTEl.className = _brcTEl.className.replace(' dragging',''); }
-    brcReorderDrop(id);
-    return;
-  }
-  if (mode === 'free') {
-    brcGhostDrop(t.clientX, t.clientY, dy);
-    return;
-  }
+  _brcFinish(t.clientX, t.clientY);
 }
 
-function brcCardClick(id) { if (!_brcBlk) brcTogCard(id); }
+// Mouse handlers
+function brcCardMD(e, id) {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  _brcBegin(e.clientX, e.clientY, id, e.currentTarget);
+  document.addEventListener('mousemove', _brcDocMM);
+  document.addEventListener('mouseup', _brcDocMU);
+}
+var _brcDocMM = function(e) { _brcStep(e.clientX, e.clientY); };
+var _brcDocMU = function(e) {
+  document.removeEventListener('mousemove', _brcDocMM);
+  document.removeEventListener('mouseup', _brcDocMU);
+  _brcFinish(e.clientX, e.clientY);
+};
 
-// ── Ghost ─────────────────────────────────────────────────────────
-function brcMakeGhost(el, cx, cy) {
-  brcKillGhost();
+// Ghost
+function _brcMkGhost(el, ids, cx, cy) {
+  _brcKillGhost();
+  _brcDragIds = ids;
   if (!el) return;
   var rect = el.getBoundingClientRect();
   var g = document.createElement('div');
@@ -1483,111 +1470,62 @@ function brcMakeGhost(el, cx, cy) {
   _brcGhost = g;
   _brcGOffX = cx - rect.left;
   _brcGOffY = cy - rect.top;
-  if (el) el.style.opacity = '0.25';
+  if (ids.length > 1) {
+    var b = document.createElement('div');
+    b.style.cssText = 'position:absolute;top:-7px;right:-7px;width:20px;height:20px;background:#2a2a2a;color:#f4ede4;border-radius:50%;font-size:11px;line-height:20px;text-align:center;font-family:Courier New,monospace;font-weight:700;';
+    b.innerHTML = ids.length;
+    g.appendChild(b);
+  }
+  if (el) el.className += ' dragging';
 }
-
-function brcGhostMove(cx, cy) {
+function _brcGhostXY(cx, cy) {
   if (!_brcGhost) return;
   _brcGhost.style.left = (cx - _brcGOffX) + 'px';
   _brcGhost.style.top  = (cy - _brcGOffY) + 'px';
 }
-
-function brcKillGhost() {
+function _brcKillGhost() {
+  if (_brcEl) _brcEl.className = _brcEl.className.replace(' dragging', '');
   var g = document.getElementById('brc-ghost');
   if (g && g.parentNode) g.parentNode.removeChild(g);
   _brcGhost = null;
 }
 
-// ── Drop zone ─────────────────────────────────────────────────────
-function brcDropHint(cx, cy) {
+// Drop zones
+function _brcHint(cx, cy) {
   var el = document.getElementById('brc-disc-area');
   if (!el) return;
   var r = el.getBoundingClientRect();
-  var over = cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
-  el.className = over ? 'brc-disc-area drop-over' : 'brc-disc-area';
+  el.className = (cx>=r.left&&cx<=r.right&&cy>=r.top&&cy<=r.bottom) ? 'brc-disc-area drop-over' : 'brc-disc-area';
 }
-
-function brcGhostDrop(cx, cy, dy) {
-  brcKillGhost();
-  var discEl = document.getElementById('brc-disc-area');
-  if (discEl) discEl.className = 'brc-disc-area';
-  if (_brcTEl) _brcTEl.style.opacity = '';
+function _brcClearHint() {
+  var el = document.getElementById('brc-disc-area');
+  if (el) el.className = 'brc-disc-area';
+}
+function _brcDrop(cx, cy, dy) {
   var est = brcEst;
   if (!est || est.turno !== papel || est.fase !== 'jogar') { brcRender(brcEst); return; }
-
-  // Drop on discard pile with 1 card selected
+  var ids = _brcDragIds;
+  var discEl = document.getElementById('brc-disc-area');
   if (discEl) {
     var r = discEl.getBoundingClientRect();
-    if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) {
-      if (brcSel.length === 1) { brcDescartarById(brcSel[0]); return; }
+    if (cx>=r.left && cx<=r.right && cy>=r.top && cy<=r.bottom) {
+      if (ids.length === 1) { brcDescartarById(ids[0]); return; }
     }
   }
-
-  // Swipe up to baixar/adicionar
-  if (dy < -55 && brcSel.length >= 1) {
-    if (brcMeldSel !== null) {
-      brcBaixar(); return;
-    }
-    if (brcSel.length >= 3) {
-      var mao2 = (papel==='a'?est.maoA:est.maoB)||[];
-      var sel2 = [];
-      for (var i=0; i<mao2.length; i++) {
-        if (brcSel.indexOf(mao2[i].id) >= 0) sel2.push(mao2[i]);
+  if (dy < -50) {
+    if (ids.length === 1) { brcDescartarById(ids[0]); return; }
+    if (brcMeldSel !== null) { brcBaixar(); return; }
+    if (ids.length >= 3) {
+      var mao = (papel==='a'?est.maoA:est.maoB)||[];
+      var sel = [];
+      for (var i=0; i<mao.length; i++) {
+        if (ids.indexOf(mao[i].id) >= 0) sel.push(mao[i]);
       }
-      if (brcValMeld(sel2)) { brcBaixar(); return; }
+      if (brcValMeld(sel)) { brcBaixar(); return; }
       toast('meld inválido');
     }
   }
-
   brcRender(brcEst);
-}
-
-// ── Reorder ───────────────────────────────────────────────────────
-function brcHandIdx(id) {
-  var mao = (papel==='a'?brcEst.maoA:brcEst.maoB)||[];
-  for (var i=0; i<mao.length; i++) { if (mao[i].id===id) return i; }
-  return 0;
-}
-
-function brcReorderStep(cx) {
-  var maoEl = document.getElementById('brc-mao');
-  if (!maoEl) return;
-  var cards = maoEl.getElementsByClassName('brc-card');
-  var target = cards.length;
-  var tx = 0, ty = 0;
-  for (var i=0; i<cards.length; i++) {
-    var r = cards[i].getBoundingClientRect();
-    if (cx < r.left + r.width/2) { target = i; tx = r.left - 3; ty = r.top; break; }
-    tx = r.right + 3; ty = r.top;
-  }
-  _brcTCurIdx = target;
-  if (!_brcDropCur) {
-    _brcDropCur = document.createElement('div');
-    _brcDropCur.id = 'brc-drop-cursor';
-    document.body.appendChild(_brcDropCur);
-  }
-  _brcDropCur.style.left = tx + 'px';
-  _brcDropCur.style.top  = ty + 'px';
-}
-
-function brcKillDropCursor() {
-  if (_brcDropCur && _brcDropCur.parentNode) _brcDropCur.parentNode.removeChild(_brcDropCur);
-  _brcDropCur = null;
-}
-
-function brcReorderDrop(id) {
-  var mao = (papel==='a'?brcEst.maoA:brcEst.maoB)||[];
-  var card = null, rest = [];
-  for (var i=0; i<mao.length; i++) {
-    if (mao[i].id===id) card=mao[i]; else rest.push(mao[i]);
-  }
-  if (!card) { brcRenderMao(mao); return; }
-  var ins = _brcTCurIdx;
-  if (ins > rest.length) ins = rest.length;
-  if (ins < 0) ins = 0;
-  rest.splice(ins, 0, card);
-  if (papel==='a') brcEst.maoA=rest; else brcEst.maoB=rest;
-  brcRenderMao(rest);
 }
 
 function brcBaralho() {
@@ -1787,7 +1725,6 @@ function brcRender(est) {
 function brcRenderMao(mao) {
   var el=document.getElementById('brc-mao');
   if (!el) return;
-  el.ontouchstart = function(ev) { if (ev.touches.length >= 2) { _brcScrMode = true; _brcTMode = null; } };
   var h='';
   for (var i=0;i<mao.length;i++) {
     var c=mao[i];
@@ -1798,7 +1735,7 @@ function brcRenderMao(mao) {
        ' ontouchstart="brcCardTS(event,'+c.id+')"'+
        ' ontouchmove="brcCardTM(event,'+c.id+')"'+
        ' ontouchend="brcCardTE(event,'+c.id+')"'+
-       ' onclick="brcCardClick('+c.id+')">' +
+       ' onmousedown="brcCardMD(event,'+c.id+')">' +
        '<span class="brc-c brc-tl">'+r+'</span>'+
        '<span class="brc-c brc-tr">'+r+'</span>'+
        '<span class="brc-suit-c">'+s+'</span>'+
