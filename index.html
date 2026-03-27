@@ -550,6 +550,10 @@ body.standalone .app { padding-top: 44px; }
         aguardando o outro jogador<span class="dot-anim" id="dots"></span>
       </div>
       <div class="mic-status" id="mic-status-w"></div>
+      <button class="back-btn" onclick="sairSala()" style="margin-top:32px">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        sair
+      </button>
     </div>
   </div>
 
@@ -557,6 +561,10 @@ body.standalone .app { padding-top: 44px; }
   <div class="screen" id="screen-menu">
     <div class="menu-header">
       <div class="menu-sala-badge" id="menu-sala-badge">----</div>
+      <button class="back-btn" onclick="sairSala()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        sair
+      </button>
       <div class="mic-status" id="mic-status-m">microfone</div>
     </div>
     <div class="bento-outer">
@@ -747,6 +755,7 @@ var iceAplicados = {};
 
 var dotsTimer = null;
 var waitingTimer = null;
+var menuPollTimer = null;
 
 // ── Standalone ────────────────────────────────────────────────────
 if (window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)) {
@@ -800,6 +809,17 @@ function limparSessao() {
   localStorage.removeItem('j_papel');
 }
 
+function sairSala() {
+  limparSessao();
+  if (waitingTimer) { clearInterval(waitingTimer); waitingTimer = null; }
+  if (menuPollTimer) { clearInterval(menuPollTimer); menuPollTimer = null; }
+  if (rpsPollingTimer) { clearInterval(rpsPollingTimer); rpsPollingTimer = null; }
+  if (dadosPollingTimer) { clearInterval(dadosPollingTimer); dadosPollingTimer = null; }
+  if (brcPollTimer) { clearInterval(brcPollTimer); brcPollTimer = null; }
+  sala = null; papel = null;
+  mostrarTela('screen-lobby');
+}
+
 function restoreSession() {
   var s = localStorage.getItem('j_sala');
   var p = localStorage.getItem('j_papel');
@@ -846,7 +866,7 @@ function voltarMenu() {
 
 var jogoAtivoAnterior = null;
 function startMenuPolling() {
-  setInterval(function() {
+  menuPollTimer = setInterval(function() {
     dbGet(sala + '/jogoAtivo', function(jogo) {
       if (jogo === jogoAtivoAnterior) return;
       jogoAtivoAnterior = jogo;
