@@ -795,6 +795,47 @@ var localStream = null;
 var muted = false;
 var webrtcAtivo = false;
 
+// ── Sound effects (Web Audio API) ─────────────────────────────────
+var _sfxCtx = null;
+var _sfxOn = localStorage.getItem('sfx') !== '0';
+var _sfxLastTurno = null;
+
+function _sfxInit() {
+  if (_sfxCtx) return _sfxCtx;
+  try { _sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  return _sfxCtx;
+}
+
+function snd(name) {
+  if (!_sfxOn) return;
+  var ctx = _sfxInit();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') { try { ctx.resume(); } catch(e) {} }
+  var t = ctx.currentTime;
+
+  function tone(f1, f2, vol, dur, delay) {
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = 'sine';
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(f1, t + delay);
+    if (f2 !== f1) o.frequency.exponentialRampToValueAtTime(f2, t + delay + dur * 0.75);
+    g.gain.setValueAtTime(0, t + delay);
+    g.gain.linearRampToValueAtTime(vol, t + delay + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + delay + dur);
+    o.start(t + delay); o.stop(t + delay + dur + 0.01);
+  }
+
+  if (name === 'tap')     { tone(900, 680, 0.13, 0.08, 0); }
+  if (name === 'draw')    { tone(320, 780, 0.09, 0.16, 0); tone(640, 420, 0.05, 0.12, 0.04); }
+  if (name === 'discard') { tone(460, 230, 0.12, 0.15, 0); }
+  if (name === 'meld')    { tone(523, 523, 0.11, 0.42, 0); tone(659, 659, 0.11, 0.38, 0.07); tone(784, 784, 0.12, 0.35, 0.14); }
+  if (name === 'turn')    { tone(660, 660, 0.11, 0.22, 0); tone(880, 880, 0.12, 0.22, 0.14); }
+  if (name === 'win')     { tone(523, 523, 0.10, 0.45, 0); tone(659, 659, 0.10, 0.42, 0.10); tone(784, 784, 0.10, 0.40, 0.20); tone(1047,1047,0.12, 0.55, 0.32); }
+  if (name === 'lose')    { tone(440, 220, 0.11, 0.55, 0); }
+  if (name === 'reorder') { tone(700, 560, 0.06, 0.07, 0); }
+}
+
 var scoreEu = 0;
 var scoreOp = 0;
 var rpsEscolha = null;    // minha escolha atual
@@ -1446,7 +1487,7 @@ function _brcFinish(x, y) {
   _brcClearReorderHint();
   if (mode === 'tap') { brcTogCard(_brcId); }
   else if (mode === 'drag') { _brcDrop(x, y, dy); }
-  else if (mode === 'reorder') { _brcReorderCommit(_brcId); }
+  else if (mode === 'reorder') { snd('reorder'); _brcReorderCommit(_brcId); }
 }
 
 // Touch handlers
@@ -1760,11 +1801,16 @@ function brcRender(est) {
       var mp=papel==='a'?est.fim.pontoA:est.fim.pontoB;
       var op=papel==='a'?est.fim.pontoB:est.fim.pontoA;
       var tx=mp>op?'você ganhou!':(mp<op?'você perdeu!':'empate!');
+      if (_sfxLastTurno !== 'fim') { snd(mp>op?'win':'lose'); _sfxLastTurno='fim'; }
       el.innerHTML='<div class="brc-fim-title">'+tx+'</div>'+
         '<div class="brc-fim-score">você: '+mp+' pts<br>oponente: '+op+' pts</div>';
     }
     return;
   }
+  // Notifica quando começa sua vez
+  var turnoKey = est.turno + est.fase + (est.v||0);
+  if (mVez && est.fase==='comprar' && _sfxLastTurno !== turnoKey) { snd('turn'); }
+  _sfxLastTurno = turnoKey;
 
   // Auto pegar morto se mão vazia na fase jogar
   if (!mortoU&&(mao||[]).length===0&&est.fase==='jogar') { brcPegarMorto(est); return; }
@@ -1846,6 +1892,7 @@ function brcTogCard(id) {
   if (!brcEst||brcEst.turno!==papel||brcEst.fase!=='jogar') return;
   var i=brcSel.indexOf(id);
   if (i>=0) brcSel.splice(i,1); else brcSel.push(id);
+  snd('tap');
   brcRender(brcEst);
 }
 
@@ -1864,6 +1911,7 @@ function brcComprar() {
   if (papel==='a') ne.maoA.unshift(card); else ne.maoB.unshift(card);
   ne.fase='jogar'; ne.v=Date.now();
   brcNewCardId=card.id;
+  snd('draw');
   brcEst=ne; brcSave(ne); brcRender(ne);
   setTimeout(function(){ brcNewCardId=null; }, 600);
 }
@@ -1890,6 +1938,7 @@ function brcComprarDescarte() {
   else { for(var i=0;i<pile.length;i++) ne.maoB.push(pile[i]); }
   ne.descarte=[]; ne.fase='jogar'; ne.v=Date.now();
   brcNewCardId=pile.length?pile[pile.length-1].id:null;
+  snd('draw');
   brcEst=ne; brcSave(ne); brcRender(ne);
   setTimeout(function(){ brcNewCardId=null; },400);
 }
@@ -1922,6 +1971,7 @@ function brcBaixar() {
   if (papel==='a'){ ne.maoA=rest; ne.canastrasA=meus; }
   else            { ne.maoB=rest; ne.canastrasB=meus; }
   ne.v=Date.now(); brcSel=[]; brcMeldSel=null;
+  snd('meld');
   brcEst=ne; brcSave(ne); brcRender(ne);
 }
 
@@ -1942,6 +1992,7 @@ function brcDescartarById(id) {
     if (mao[i].id===id) disc=mao[i]; else rest.push(mao[i]);
   }
   if (!disc) return;
+  snd('discard');
   brcSel=[]; brcMeldSel=null;
   var ne=brcClone(est);
   brcNorm(ne);
