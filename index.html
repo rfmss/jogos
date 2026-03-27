@@ -449,17 +449,18 @@ body.standalone .app { padding-top: 44px; }
 .brc-tr { top:3px; right:3px; }
 .brc-bl { bottom:3px; left:3px; }
 .brc-br { bottom:3px; right:3px; }
-.brc-suit-c { position:absolute; top:50%; left:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%); font-size:22px; line-height:1; }
+.brc-suit-c { position:absolute; top:50%; left:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%); line-height:0; }
+.brc-suit-c svg { width:22px; height:22px; display:block; }
 .brc-card.red { color:#c0392b; }
 .brc-card.wild { color:#7c3aed; background:#f0ebff; }
 .brc-card.selected { border-color:#2a2a2a; border-width:2.5px; -webkit-transform:translateY(-10px); transform:translateY(-10px); }
 .brc-card.sm { width:28px; height:40px; border-radius:4px; cursor:default; touch-action:auto; }
 .brc-card.sm .brc-c { font-size:8px; }
-.brc-card.sm .brc-suit-c { font-size:13px; }
+.brc-card.sm .brc-suit-c svg { width:14px; height:14px; }
 .brc-card.sm .brc-tr,.brc-card.sm .brc-bl,.brc-card.sm .brc-br { display:none; }
 .brc-card.dc { width:50px; height:68px; border-radius:8px; }
 .brc-card.dc .brc-c { font-size:13px; }
-.brc-card.dc .brc-suit-c { font-size:26px; }
+.brc-card.dc .brc-suit-c svg { width:26px; height:26px; }
 .brc-card.novo { -webkit-animation:brcSlideIn 0.26s ease; animation:brcSlideIn 0.26s ease; }
 .brc-card.voando { -webkit-animation:brcFlyUp 0.22s ease forwards; animation:brcFlyUp 0.22s ease forwards; }
 .brc-meld {
@@ -1251,7 +1252,12 @@ function dadosNovaRodada() {
 // ═══════════════════════════════════════════════════════════════════
 var BRC_RANKS = ['A','2','3','4','5','6','7','8','9','T','J','Q','K'];
 var BRC_SUITS = ['S','H','D','C'];
-var BRC_SYM   = {S:'♠',H:'♥',D:'♦',C:'♣'};
+var BRC_SYM = {
+  S:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18v4"/><path d="M2 14.499a5.5 5.5 0 0 0 9.591 3.675.6.6 0 0 1 .818.001A5.5 5.5 0 0 0 22 14.5c0-2.29-1.5-4-3-5.5l-5.492-5.312a2 2 0 0 0-3-.02L5 8.999c-1.5 1.5-3 3.2-3 5.5"/></svg>',
+  H:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>',
+  D:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z"/></svg>',
+  C:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.28 9.05a5.5 5.5 0 1 0-10.56 0A5.5 5.5 0 1 0 12 17.66a5.5 5.5 0 1 0 5.28-8.6Z"/><path d="M12 17.66L12 22"/></svg>'
+};
 var BRC_ORD   = {'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'T':8,'J':9,'Q':10,'K':11,'A':12};
 var BRC_VAL   = {'A':15,'2':20,'3':5,'4':5,'5':5,'6':5,'7':5,'8':10,'9':10,'T':10,'J':10,'Q':10,'K':10,'JO':30};
 
