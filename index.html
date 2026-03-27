@@ -373,6 +373,53 @@ body.standalone .app { padding-top: 44px; }
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
   overflow:hidden;
 }
+/* portrait: left=tabela cresce, right=mao natural */
+.brc-left {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-box-flex:1; -webkit-flex:1; flex:1;
+  min-height:0; overflow:hidden;
+}
+.brc-right {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-flex-shrink:0; flex-shrink:0;
+}
+/* landscape phone: split esquerda/direita */
+@media screen and (max-height:500px) and (orientation:landscape) {
+  .brc-outer {
+    -webkit-box-orient:horizontal !important;
+    -webkit-flex-direction:row !important; flex-direction:row !important;
+  }
+  .brc-left {
+    -webkit-box-flex:1; -webkit-flex:1; flex:1;
+    border-right:1px solid rgba(0,0,0,0.1);
+    min-height:0;
+  }
+  .brc-right {
+    -webkit-flex:0 0 148px; flex:0 0 148px;
+    -webkit-box-flex:0;
+    border-left:none;
+    overflow:hidden;
+  }
+  .brc-mao {
+    -webkit-box-orient:vertical !important;
+    -webkit-flex-direction:column !important; flex-direction:column !important;
+    overflow-x:hidden !important; overflow-y:auto !important;
+    -webkit-box-flex:1 !important; -webkit-flex:1 !important; flex:1 !important;
+    gap:3px !important; padding:6px 8px !important;
+    -webkit-box-align:center !important; -webkit-align-items:center !important; align-items:center !important;
+  }
+  .brc-mao .brc-card.selected {
+    -webkit-transform:translateX(-8px) translateY(0) !important;
+    transform:translateX(-8px) translateY(0) !important;
+  }
+  .brc-status { font-size:9px; padding:3px 6px 6px; }
+  .brc-op-bar { padding:4px 10px; font-size:10px; }
+  .brc-center { padding:4px 0; }
+  .brc-table { padding:0 6px; gap:3px; }
+  #brc-turno-label { padding:0 36px; }
+}
 .brc-op-bar {
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between;
@@ -672,28 +719,32 @@ body.standalone .app { padding-top: 44px; }
 
     <!-- ── BURACO ── -->
     <div class="brc-outer hidden" id="jogo-buraco">
-      <div class="brc-op-bar">
-        <span id="brc-op-cards">🂠 0</span>
-        <span id="brc-turno-label" style="font-weight:700">—</span>
-        <span id="brc-op-melds">melds: 0</span>
-      </div>
-      <div class="brc-table">
-        <div class="brc-melds-area" id="brc-melds-op"></div>
-        <div class="brc-sep"></div>
-        <div class="brc-center">
-          <button class="brc-stock-btn" id="brc-stock-btn" onclick="brcComprar()">
-            <span style="font-size:22px">🂠</span>
-            <span id="brc-stock-count">0</span>
-          </button>
-          <div class="brc-disc-area" id="brc-disc-area" onclick="brcComprarDescarte()">
-            <div id="brc-disc-top"></div>
-          </div>
+      <div class="brc-left">
+        <div class="brc-op-bar">
+          <span id="brc-op-cards">🂠 0</span>
+          <span id="brc-turno-label" style="font-weight:700">—</span>
+          <span id="brc-op-melds">melds: 0</span>
         </div>
-        <div class="brc-sep"></div>
-        <div class="brc-melds-area" id="brc-melds-eu"></div>
+        <div class="brc-table">
+          <div class="brc-melds-area" id="brc-melds-op"></div>
+          <div class="brc-sep"></div>
+          <div class="brc-center">
+            <button class="brc-stock-btn" id="brc-stock-btn" onclick="brcComprar()">
+              <span style="font-size:22px">🂠</span>
+              <span id="brc-stock-count">0</span>
+            </button>
+            <div class="brc-disc-area" id="brc-disc-area" onclick="brcComprarDescarte()">
+              <div id="brc-disc-top"></div>
+            </div>
+          </div>
+          <div class="brc-sep"></div>
+          <div class="brc-melds-area" id="brc-melds-eu"></div>
+        </div>
       </div>
-      <div class="brc-mao" id="brc-mao"></div>
-      <div class="brc-status" id="brc-status"></div>
+      <div class="brc-right">
+        <div class="brc-mao" id="brc-mao"></div>
+        <div class="brc-status" id="brc-status"></div>
+      </div>
     </div>
   </div>
 
