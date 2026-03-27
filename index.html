@@ -810,6 +810,7 @@ function limparSessao() {
 }
 
 function sairSala() {
+  var s = sala;
   limparSessao();
   if (waitingTimer) { clearInterval(waitingTimer); waitingTimer = null; }
   if (menuPollTimer) { clearInterval(menuPollTimer); menuPollTimer = null; }
@@ -817,6 +818,7 @@ function sairSala() {
   if (dadosPollingTimer) { clearInterval(dadosPollingTimer); dadosPollingTimer = null; }
   if (brcPollTimer) { clearInterval(brcPollTimer); brcPollTimer = null; }
   sala = null; papel = null;
+  if (s) dbPatch(s, { estado: 'encerrada' });
   mostrarTela('screen-lobby');
 }
 
@@ -867,6 +869,10 @@ function voltarMenu() {
 var jogoAtivoAnterior = null;
 function startMenuPolling() {
   menuPollTimer = setInterval(function() {
+    if (!sala) return;
+    dbGet(sala + '/estado', function(estado) {
+      if (!estado || estado === 'encerrada') { sairSala(); return; }
+    });
     dbGet(sala + '/jogoAtivo', function(jogo) {
       if (jogo === jogoAtivoAnterior) return;
       jogoAtivoAnterior = jogo;
@@ -1088,6 +1094,11 @@ function aguardarJogadorB() {
   waitingTimer = setInterval(function() {
     if (++tries > 300) { clearInterval(waitingTimer); limparSessao(); toast('tempo esgotado'); mostrarTela('screen-lobby'); return; }
     dbGet(sala + '/estado', function(estado) {
+      if (!estado || estado === 'encerrada') {
+        clearInterval(waitingTimer);
+        limparSessao(); sala = null; papel = null;
+        toast('sala encerrada'); mostrarTela('screen-lobby'); return;
+      }
       if (estado === 'jogando') {
         clearInterval(waitingTimer);
         stopDots();
@@ -1723,6 +1734,7 @@ function brcPegarMorto(est) {
   for (var i=0;i<m.length;i++) mao.push(m[i]);
   if (papel==='a'){ ne.maoA=mao; ne.mortoA=[]; ne.mortoUsadoA=true; }
   else { ne.maoB=mao; ne.mortoB=[]; ne.mortoUsadoB=true; }
+  brcSel=[]; brcMeldSel=null;
   ne.v=Date.now(); brcEst=ne; brcSave(ne); brcRender(ne);
   toast('morto pego! +11 cartas');
 }
