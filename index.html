@@ -586,7 +586,7 @@ body.standalone .app { padding-top: 44px; }
       <div class="divider">ou</div>
       <div class="join-wrap">
         <input class="code-input" id="inp-code" type="text" inputmode="numeric" pattern="\d*"
-          placeholder="0000" maxlength="4"
+          placeholder="00" maxlength="2"
           autocomplete="off" autocorrect="off" autocapitalize="off">
         <button class="join-btn" onclick="entrarSala()">entrar</button>
       </div>
@@ -597,7 +597,7 @@ body.standalone .app { padding-top: 44px; }
   <div class="screen" id="screen-waiting">
     <div class="waiting-wrap">
       <div class="waiting-label">código da sala</div>
-      <div class="room-code" id="waiting-code">----</div>
+      <div class="room-code" id="waiting-code">--</div>
       <div class="waiting-label">
         aguardando o outro jogador<span class="dot-anim" id="dots"></span>
       </div>
@@ -612,7 +612,7 @@ body.standalone .app { padding-top: 44px; }
   <!-- ══ MENU ══ -->
   <div class="screen" id="screen-menu">
     <div class="menu-header">
-      <div class="menu-sala-badge" id="menu-sala-badge">----</div>
+      <div class="menu-sala-badge" id="menu-sala-badge">--</div>
       <button class="back-btn" onclick="sairSala()">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         sair
@@ -847,7 +847,7 @@ function dbPatch(path, data, cb) {
 // ── Lobby helpers ─────────────────────────────────────────────────
 function gerarCodigo() {
   var code = '';
-  for (var i = 0; i < 4; i++) { code += Math.floor(Math.random() * 10); }
+  for (var i = 0; i < 2; i++) { code += Math.floor(Math.random() * 10); }
   return code;
 }
 
