@@ -551,6 +551,12 @@ body.standalone .app { padding-top: 44px; }
   border-radius:2px; opacity:0.7;
 }
 .brc-disc-area.drop-over { border-color:#2a2a2a !important; background:rgba(0,0,0,0.12); }
+.brc-card.drop-before { box-shadow:-4px 0 0 0 #2a2a2a !important; }
+.brc-card.drop-after  { box-shadow: 4px 0 0 0 #2a2a2a !important; }
+@media screen and (max-height:500px) and (orientation:landscape) {
+  .brc-card.drop-before { box-shadow:0 -4px 0 0 #2a2a2a !important; }
+  .brc-card.drop-after  { box-shadow:0  4px 0 0 #2a2a2a !important; }
+}
 .brc-fim {
   position:fixed; top:0; left:0; right:0; bottom:0;
   background:rgba(0,0,0,0.82); z-index:9990;
@@ -1382,15 +1388,29 @@ var brcNewCardId = null;
 // ── Touch system ──────────────────────────────────────────────────
 // ── Unified drag/touch/mouse system ───────────────────────────────
 var _brcSX = 0, _brcSY = 0;
-var _brcMode = null;   // null | 'tap' | 'scroll' | 'drag'
+var _brcMode = null;   // null | 'tap' | 'scroll' | 'drag' | 'reorder'
 var _brcId = null, _brcEl = null;
 var _brcDragIds = [];
 var _brcGhost = null, _brcGOffX = 0, _brcGOffY = 0;
+var _brcLongTimer = null;
+var _brcReorderIdx = -1;
 
 function _brcBegin(x, y, id, el) {
   _brcSX = x; _brcSY = y;
   _brcId = id; _brcEl = el;
   _brcMode = 'tap';
+  _brcLongTimer = setTimeout(function() {
+    if (_brcMode === 'tap') {
+      _brcMode = 'reorder';
+      _brcMkGhost(el, [id], x, y);
+      _brcReorderHint(x, y);
+      if (navigator.vibrate) navigator.vibrate(30);
+    }
+  }, 320);
+}
+
+function _brcCancelLong() {
+  if (_brcLongTimer) { clearTimeout(_brcLongTimer); _brcLongTimer = null; }
 }
 
 function _brcStep(x, y) {
@@ -1399,10 +1419,16 @@ function _brcStep(x, y) {
   var adx = dx < 0 ? -dx : dx, ady = dy < 0 ? -dy : dy;
   if (_brcMode === 'tap') {
     if (adx < 8 && ady < 8) return false;
+    _brcCancelLong();
     if (adx >= ady * 1.3) { _brcMode = 'scroll'; return false; }
     _brcMode = 'drag';
     var ids = brcSel.indexOf(_brcId) >= 0 ? brcSel.slice() : [_brcId];
     _brcMkGhost(_brcEl, ids, x, y);
+  }
+  if (_brcMode === 'reorder') {
+    _brcGhostXY(x, y);
+    _brcReorderHint(x, y);
+    return true;
   }
   if (_brcMode === 'drag') {
     _brcGhostXY(x, y);
@@ -1413,13 +1439,16 @@ function _brcStep(x, y) {
 }
 
 function _brcFinish(x, y) {
+  _brcCancelLong();
   var dy = y - _brcSY;
   var mode = _brcMode;
   _brcMode = null;
   _brcKillGhost();
   _brcClearHint();
+  _brcClearReorderHint();
   if (mode === 'tap') { brcTogCard(_brcId); }
   else if (mode === 'drag') { _brcDrop(x, y, dy); }
+  else if (mode === 'reorder') { _brcReorderCommit(_brcId); }
 }
 
 // Touch handlers
@@ -1500,6 +1529,49 @@ function _brcHint(cx, cy) {
 function _brcClearHint() {
   var el = document.getElementById('brc-disc-area');
   if (el) el.className = 'brc-disc-area';
+}
+// Reorder helpers
+function _brcReorderHint(cx, cy) {
+  var maoEl = document.getElementById('brc-mao');
+  if (!maoEl) return;
+  var cards = maoEl.getElementsByClassName('brc-card');
+  var isLand = window.innerHeight < 500 && window.innerWidth > window.innerHeight;
+  var target = cards.length;
+  for (var i = 0; i < cards.length; i++) {
+    var r = cards[i].getBoundingClientRect();
+    var mid = isLand ? (r.top + r.height/2) : (r.left + r.width/2);
+    var pos = isLand ? cy : cx;
+    if (pos < mid) { target = i; break; }
+  }
+  _brcReorderIdx = target;
+  for (var j = 0; j < cards.length; j++) {
+    var cls = cards[j].className.replace(' drop-before','').replace(' drop-after','');
+    if (j === target) cls += ' drop-before';
+    else if (target >= cards.length && j === cards.length - 1) cls += ' drop-after';
+    cards[j].className = cls;
+  }
+}
+function _brcClearReorderHint() {
+  var maoEl = document.getElementById('brc-mao');
+  if (!maoEl) return;
+  var cards = maoEl.getElementsByClassName('brc-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].className = cards[i].className.replace(' drop-before','').replace(' drop-after','');
+  }
+}
+function _brcReorderCommit(id) {
+  var mao = (papel==='a'?brcEst.maoA:brcEst.maoB)||[];
+  var card = null, rest = [];
+  for (var i = 0; i < mao.length; i++) {
+    if (mao[i].id === id) card = mao[i]; else rest.push(mao[i]);
+  }
+  if (!card) { brcRenderMao(mao); return; }
+  var ins = _brcReorderIdx;
+  if (ins > rest.length) ins = rest.length;
+  if (ins < 0) ins = 0;
+  rest.splice(ins, 0, card);
+  if (papel==='a') brcEst.maoA=rest; else brcEst.maoB=rest;
+  brcRenderMao(rest);
 }
 function _brcDrop(cx, cy, dy) {
   var est = brcEst;
