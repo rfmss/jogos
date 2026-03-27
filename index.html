@@ -1510,6 +1510,7 @@ function brcCardTM(e, id) {
   if (_brcStep(t.clientX, t.clientY)) e.preventDefault();
 }
 function brcCardTE(e, id) {
+  _brcLastTouch = Date.now(); // renova guard — mousedown sintético vem após touchend
   var t = e.changedTouches[0];
   _brcFinish(t.clientX, t.clientY);
 }
