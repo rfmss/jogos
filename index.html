@@ -550,12 +550,18 @@ body.standalone .app { padding-top: 44px; }
   border-radius:2px; opacity:0.7;
 }
 .brc-disc-area.drop-over { border-color:#2a2a2a !important; background:rgba(0,0,0,0.12); }
-.brc-card.drop-before { box-shadow:-4px 0 0 0 #2a2a2a !important; }
-.brc-card.drop-after  { box-shadow: 4px 0 0 0 #2a2a2a !important; }
-@media screen and (max-height:500px) and (orientation:landscape) {
-  .brc-card.drop-before { box-shadow:0 -4px 0 0 #2a2a2a !important; }
-  .brc-card.drop-after  { box-shadow:0  4px 0 0 #2a2a2a !important; }
+.brc-mao.reordering .brc-card:not(.dragging) {
+  -webkit-transition:-webkit-transform 0.13s ease; transition:transform 0.13s ease;
 }
+@-webkit-keyframes brcLand {
+  0%   { box-shadow:0 0 0 4px rgba(42,42,42,0.5); }
+  100% { box-shadow:none; }
+}
+@keyframes brcLand {
+  0%   { box-shadow:0 0 0 4px rgba(42,42,42,0.5); }
+  100% { box-shadow:none; }
+}
+.brc-card.land { -webkit-animation:brcLand 0.35s ease; animation:brcLand 0.35s ease; }
 .brc-fim {
   position:fixed; top:0; left:0; right:0; bottom:0;
   background:rgba(0,0,0,0.82); z-index:9990;
@@ -741,7 +747,7 @@ body.standalone .app { padding-top: 44px; }
               <span style="font-size:22px">🂠</span>
               <span id="brc-stock-count">0</span>
             </button>
-            <div class="brc-disc-area" id="brc-disc-area" onclick="brcComprarDescarte()">
+            <div class="brc-disc-area" id="brc-disc-area" onclick="brcDiscClick()">
               <div id="brc-disc-top"></div>
             </div>
           </div>
@@ -1435,6 +1441,7 @@ var _brcGhost = null, _brcGOffX = 0, _brcGOffY = 0;
 var _brcLongTimer = null;
 var _brcLastTouch = 0; // bloqueia mousedown sintético pós-touch
 var _brcReorderIdx = -1;
+var _brcReorderLandId = null;
 
 function _brcBegin(x, y, id, el) {
   _brcSX = x; _brcSY = y;
@@ -1446,6 +1453,8 @@ function _brcBegin(x, y, id, el) {
       if (_brcMode === 'tap') {
         _brcMode = 'reorder';
         _brcMkGhost(el, [id], x, y);
+        var maoEl = document.getElementById('brc-mao');
+        if (maoEl) maoEl.className += ' reordering';
         _brcReorderHint(x, y);
         if (navigator.vibrate) navigator.vibrate(30);
       }
@@ -1593,19 +1602,32 @@ function _brcReorderHint(cx, cy) {
     if (pos < mid) { target = i; break; }
   }
   _brcReorderIdx = target;
+  // Abre gap: empurra cartas após o ponto de inserção
+  var shift = isLand ? 55 : 58; // altura ou largura da carta + gap
   for (var j = 0; j < cards.length; j++) {
-    var cls = cards[j].className.replace(' drop-before','').replace(' drop-after','');
-    if (j === target) cls += ' drop-before';
-    else if (target >= cards.length && j === cards.length - 1) cls += ' drop-after';
-    cards[j].className = cls;
+    if (cards[j].className.indexOf('dragging') >= 0) {
+      cards[j].style.webkitTransform = '';
+      cards[j].style.transform = '';
+      continue;
+    }
+    var offset = j >= target ? shift : 0;
+    if (isLand) {
+      cards[j].style.webkitTransform = 'translateY(' + offset + 'px)';
+      cards[j].style.transform = 'translateY(' + offset + 'px)';
+    } else {
+      cards[j].style.webkitTransform = 'translateX(' + offset + 'px)';
+      cards[j].style.transform = 'translateX(' + offset + 'px)';
+    }
   }
 }
 function _brcClearReorderHint() {
   var maoEl = document.getElementById('brc-mao');
   if (!maoEl) return;
+  maoEl.className = maoEl.className.replace(' reordering', '');
   var cards = maoEl.getElementsByClassName('brc-card');
   for (var i = 0; i < cards.length; i++) {
-    cards[i].className = cards[i].className.replace(' drop-before','').replace(' drop-after','');
+    cards[i].style.webkitTransform = '';
+    cards[i].style.transform = '';
   }
 }
 function _brcReorderCommit(id) {
@@ -1620,6 +1642,7 @@ function _brcReorderCommit(id) {
   if (ins < 0) ins = 0;
   rest.splice(ins, 0, card);
   if (papel==='a') brcEst.maoA=rest; else brcEst.maoB=rest;
+  _brcReorderLandId = id;
   brcRenderMao(rest);
 }
 function _brcDrop(cx, cy, dy) {
@@ -1851,13 +1874,15 @@ function brcRender(est) {
 function brcRenderMao(mao) {
   var el=document.getElementById('brc-mao');
   if (!el) return;
+  var landId = _brcReorderLandId; _brcReorderLandId = null;
   var h='';
   for (var i=0;i<mao.length;i++) {
     var c=mao[i];
     var sel=brcSel.indexOf(c.id)>=0;
     var novo=(brcNewCardId!==null&&c.id===brcNewCardId);
+    var land=(landId!==null&&c.id===landId);
     var r=brcRS(c), s=brcSS(c);
-    h+='<div class="brc-card'+brcCC(c)+(sel?' selected':'')+(novo?' novo':'')+'"'+
+    h+='<div class="brc-card'+brcCC(c)+(sel?' selected':'')+(novo?' novo':'')+(land?' land':'')+'"'+
        ' ontouchstart="brcCardTS(event,'+c.id+')"'+
        ' ontouchmove="brcCardTM(event,'+c.id+')"'+
        ' ontouchend="brcCardTE(event,'+c.id+')"'+
@@ -1926,6 +1951,14 @@ function brcComprar() {
   setTimeout(function(){ brcNewCardId=null; }, 600);
 }
 
+function brcDiscClick() {
+  if (brcSel.length >= 1 && brcEst && brcEst.turno === papel && brcEst.fase === 'jogar') {
+    if (brcSel.length === 1) { brcDescartarById(brcSel[0]); return; }
+    toast('selecione 1 carta para descartar');
+  } else {
+    brcComprarDescarte();
+  }
+}
 function brcComprarDescarte() {
   var est=brcEst;
   if (!est||est.turno!==papel||est.fase!=='comprar') return;
