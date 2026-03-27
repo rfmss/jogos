@@ -1433,6 +1433,7 @@ var _brcId = null, _brcEl = null;
 var _brcDragIds = [];
 var _brcGhost = null, _brcGOffX = 0, _brcGOffY = 0;
 var _brcLongTimer = null;
+var _brcLastTouch = 0; // bloqueia mousedown sintético pós-touch
 var _brcReorderIdx = -1;
 
 function _brcBegin(x, y, id, el) {
@@ -1499,6 +1500,7 @@ function _brcFinish(x, y) {
 // Touch handlers
 function brcCardTS(e, id) {
   if (e.touches.length >= 2) { _brcMode = null; return; }
+  _brcLastTouch = Date.now();
   var t = e.touches[0];
   _brcBegin(t.clientX, t.clientY, id, e.currentTarget);
 }
@@ -1515,6 +1517,7 @@ function brcCardTE(e, id) {
 // Mouse handlers
 function brcCardMD(e, id) {
   if (e.button !== 0) return;
+  if (Date.now() - _brcLastTouch < 600) return; // ignora sintético pós-touch
   e.preventDefault();
   _brcBegin(e.clientX, e.clientY, id, e.currentTarget);
   document.addEventListener('mousemove', _brcDocMM);
