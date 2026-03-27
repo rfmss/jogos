@@ -1159,7 +1159,7 @@ function criarSala() {
 
 function entrarSala() {
   var code = document.getElementById('inp-code').value.trim();
-  if (!/^\d{4}$/.test(code)) { toast('código tem 4 números'); return; }
+  if (!/^\d{2}$/.test(code)) { toast('código tem 2 números'); return; }
   sala = code;
   papel = 'b';
 
