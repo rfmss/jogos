@@ -1700,6 +1700,7 @@ function brcBaixar() {
 
 // Descartar: botão explícito — descarta a 1 carta selecionada
 function brcDescartar() {
+  toast('dbg: sel='+brcSel.length);
   if (brcSel.length!==1) { toast('selecione 1 carta para descartar'); return; }
   brcDescartarById(brcSel[0]);
 }
@@ -1707,14 +1708,16 @@ function brcDescartar() {
 // Descarta carta por id (usado pelo botão e pelo swipe)
 function brcDescartarById(id) {
   var est=brcEst;
-  if (!est||est.turno!==papel||est.fase!=='jogar') return;
+  if (!est) { toast('dbg: sem est'); return; }
+  if (est.turno!==papel) { toast('dbg: turno='+est.turno+' papel='+papel); return; }
+  if (est.fase!=='jogar') { toast('dbg: fase='+est.fase); return; }
   var mao=(papel==='a'?est.maoA:est.maoB).slice();
   var mortoU=papel==='a'?est.mortoUsadoA:est.mortoUsadoB;
   var disc=null, rest=[];
   for (var i=0;i<mao.length;i++) {
     if (mao[i].id===id) disc=mao[i]; else rest.push(mao[i]);
   }
-  if (!disc) return;
+  if (!disc) { toast('dbg: carta '+id+' não achou em '+mao.length); return; }
   brcSel=[]; brcMeldSel=null;
   var ne=brcClone(est);
   if (papel==='a') ne.maoA=rest; else ne.maoB=rest;
