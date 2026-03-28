@@ -805,7 +805,7 @@ body.standalone .app { padding-top: 44px; }
         <div class="brc-op-bar">
           <span id="brc-op-cards">🂠 0</span>
           <span id="brc-turno-label" style="font-weight:700">—</span>
-          <span id="brc-op-melds">melds: 0</span>
+          <span id="brc-op-melds">baixas: 0</span>
         </div>
         <div class="brc-table">
           <div class="brc-melds-area" id="brc-melds-op"></div>
@@ -1754,7 +1754,7 @@ function _brcDrop(cx, cy, dy) {
         if (ids.indexOf(mao[i].id) >= 0) sel.push(mao[i]);
       }
       if (brcValMeld(sel)) { brcBaixar(); return; }
-      toast('meld inválido');
+      toast('baixa inválida');
     }
   }
   brcRender(brcEst);
@@ -1911,7 +1911,7 @@ function brcRender(est) {
   var el;
 
   el=document.getElementById('brc-op-cards');   if(el) el.innerHTML='🂠 '+((opMao||[]).length);
-  el=document.getElementById('brc-op-melds');   if(el) el.innerHTML='melds: '+((opM||[]).length);
+  el=document.getElementById('brc-op-melds');   if(el) el.innerHTML='baixas: '+((opM||[]).length);
   el=document.getElementById('brc-turno-label');if(el) el.innerHTML=mVez?'sua vez':'vez do oponente';
   el=document.getElementById('brc-stock-count');if(el) el.innerHTML=(est.stock||[]).length;
 
@@ -1957,17 +1957,17 @@ function brcRender(est) {
   } else if (brcSel.length===0) {
     msg = 'toque para selecionar  •  arraste para descartar';
   } else if (brcSel.length===1) {
-    msg = 'arraste até o descarte  •  selecione mais para meld';
+    msg = 'arraste para descartar  •  selecione mais para baixar';
   } else if (brcSel.length>=3) {
     var maoChk=(papel==='a'?est.maoA:est.maoB)||[];
     var selChk=[];
     for (var si=0;si<maoChk.length;si++) { if(brcSel.indexOf(maoChk[si].id)>=0) selChk.push(maoChk[si]); }
-    msg = brcValMeld(selChk) ? 'arraste para cima para baixar' : 'seleção inválida para meld';
+    msg = brcValMeld(selChk) ? 'arraste para cima para baixar' : 'combinação inválida';
   } else {
-    msg = brcSel.length + ' cartas  •  selecione mais para meld';
+    msg = brcSel.length + ' cartas  •  selecione mais para baixar';
   }
   if (!mortoU && (morto||[]).length > 0) { msg = msg + '  •  morto disponível'; }
-  brcSetStatus(msg);
+  brcSetStatus(msg, mVez);
 }
 
 function brcRenderMao(mao) {
@@ -2019,7 +2019,14 @@ function brcCC(c) { return (c.rank==='JO'||c.rank==='2')?' wild':brcRed(c)?' red
 function brcRS(c) { return c.rank==='JO'?'★':(c.rank==='T'?'10':c.rank); }
 function brcSS(c) { return c.rank==='JO'?'':(BRC_SYM[c.suit]||''); }
 
-function brcSetStatus(msg) { var el=document.getElementById('brc-status'); if(el) el.innerHTML=msg; }
+function brcSetStatus(msg, vez) {
+  var el=document.getElementById('brc-status');
+  if (!el) return;
+  el.innerHTML=msg;
+  if (vez === true)  { el.style.background='rgba(22,120,50,0.92)'; }
+  else if (vez === false) { el.style.background='rgba(180,30,30,0.88)'; }
+  else { el.style.background='rgba(0,0,0,0.82)'; }
+}
 
 // ── Interações ────────────────────────────────────────────────────
 function brcTogCard(id) {
@@ -2100,12 +2107,12 @@ function brcBaixar() {
     if (!sel.length) { toast('selecione cartas para adicionar'); return; }
     if (brcMeldSel>=meus.length) return;
     var ext=meus[brcMeldSel].concat(sel);
-    if (!brcValMeld(ext)) { toast('combinação inválida para esse meld'); return; }
+    if (!brcValMeld(ext)) { toast('não encaixa nessa baixa'); return; }
     meus[brcMeldSel]=ext;
   } else {
     // Novo meld
     if (sel.length<3) { toast('mínimo 3 cartas'); return; }
-    if (!brcValMeld(sel)) { toast('meld inválido — mesma patente ou sequência'); return; }
+    if (!brcValMeld(sel)) { toast('baixa inválida — mesmo número ou sequência do mesmo naipe'); return; }
     meus.push(sel);
   }
   var ne=brcClone(est);
@@ -2189,7 +2196,7 @@ var brcTutStep = 0;
 var BRC_TUT = [
   { emoji: '🃏', title: 'Compre uma carta', body: 'Toque no monte (🂠) ou na carta do descarte para começar sua vez.' },
   { emoji: '✋', title: 'Selecione cartas', body: 'Toque nas cartas para selecioná-las. Selecione 3 ou mais do mesmo número ou em sequência.' },
-  { emoji: '⬆️', title: 'Baixe na mesa', body: 'Com 3 ou mais cartas selecionadas, arraste para cima para baixar um meld.' },
+  { emoji: '⬆️', title: 'Baixe na mesa', body: 'Com 3 ou mais cartas selecionadas, arraste para cima para fazer uma baixa.' },
   { emoji: '🗑️', title: 'Descarte para passar', body: 'Selecione 1 carta e arraste para o descarte, ou toque na pilha de descarte.' }
 ];
 
