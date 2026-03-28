@@ -1808,7 +1808,6 @@ function brcValRank(cards) {
   for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
   if (nat.length < 2) return false;
   var r0=nat[0].rank;
-  if (r0 !== 'A') return false; // trinca apenas de Ases
   for (var i=1;i<nat.length;i++) { if(nat[i].rank!==r0) return false; }
   return w < nat.length;
 }
