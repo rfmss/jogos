@@ -1510,7 +1510,7 @@ var BRC_SYM = {
   C:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#7a8a96" stroke="#7a8a96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.28 9.05a5.5 5.5 0 1 0-10.56 0A5.5 5.5 0 1 0 12 17.66a5.5 5.5 0 1 0 5.28-8.6Z"/><path d="M12 17.66L12 22"/></svg>'
 };
 var BRC_ORD   = {'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'T':8,'J':9,'Q':10,'K':11,'A':12};
-var BRC_VAL   = {'A':15,'2':20,'3':5,'4':5,'5':5,'6':5,'7':5,'8':10,'9':10,'T':10,'J':10,'Q':10,'K':10,'JO':30};
+var BRC_VAL   = {'A':15,'2':20,'3':5,'4':5,'5':5,'6':5,'7':5,'8':10,'9':10,'T':10,'J':10,'Q':10,'K':10};
 
 var brcEst = null;
 var brcSel = [];
@@ -1788,8 +1788,6 @@ function brcBaralho() {
         cards.push({id:id++, rank:BRC_RANKS[r], suit:BRC_SUITS[s]});
       }
     }
-    cards.push({id:id++, rank:'JO', suit:''});
-    cards.push({id:id++, rank:'JO', suit:''});
   }
   return cards;
 }
@@ -1802,24 +1800,25 @@ function brcEmb(arr) {
   return a;
 }
 
-function brcWild(c) { return c.rank==='JO'||c.rank==='2'; }
+function brcWild(c) { return c.rank==='2'; }
 function brcRed(c)  { return c.suit==='H'||c.suit==='D'; }
 
 function brcValRank(cards) {
   var nat=[], w=0;
   for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
-  if (nat.length < 2) return false; // precisa de ao menos 2 cartas naturais
-  if (nat[0].rank==='2') return false;
+  if (nat.length < 2) return false;
   var r0=nat[0].rank;
+  if (r0 !== 'A') return false; // trinca apenas de Ases
   for (var i=1;i<nat.length;i++) { if(nat[i].rank!==r0) return false; }
-  return w < nat.length; // curingas devem ser MENOS que naturais
+  return w < nat.length;
 }
 
 function brcValSeq(cards) {
   var nat=[], w=0;
   for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
-  if (nat.length < 2) return false; // precisa de ao menos 2 cartas naturais
-  if (w >= nat.length) return false; // curingas devem ser MENOS que naturais
+  if (nat.length < 2) return false;
+  if (w > 1) return false; // máx 1 curinga por sequência
+  if (w >= nat.length) return false;
   var s0=nat[0].suit;
   if (!s0) return false;
   for (var i=0;i<nat.length;i++) {
@@ -2035,9 +2034,9 @@ function brcCEl(c,cls) {
     '<span class="brc-c brc-br">'+r+'</span></div>';
 }
 
-function brcCC(c) { return (c.rank==='JO'||c.rank==='2')?' wild':brcRed(c)?' red':''; }
-function brcRS(c) { return c.rank==='JO'?'★':(c.rank==='T'?'10':c.rank); }
-function brcSS(c) { return c.rank==='JO'?'':(BRC_SYM[c.suit]||''); }
+function brcCC(c) { return c.rank==='2'?' wild':brcRed(c)?' red':''; }
+function brcRS(c) { return c.rank==='T'?'10':c.rank; }
+function brcSS(c) { return BRC_SYM[c.suit]||''; }
 
 function brcSetStatus(msg, vez) {
   var el=document.getElementById('brc-status');
@@ -2046,6 +2045,26 @@ function brcSetStatus(msg, vez) {
   if (vez === true)  { el.style.background='rgba(22,120,50,0.92)'; }
   else if (vez === false) { el.style.background='rgba(180,30,30,0.88)'; }
   else { el.style.background='rgba(0,0,0,0.82)'; }
+  if (!el._ttsbound) {
+    el._ttsbound = true;
+    el.style.cursor = 'pointer';
+    el.title = 'toque para ouvir';
+    el.addEventListener('click', function() { brcSpeak(el.innerText||el.textContent); });
+  }
+}
+
+function brcSpeak(txt) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(txt);
+  u.lang = 'pt-BR'; u.rate = 0.92; u.pitch = 1.1;
+  var voices = window.speechSynthesis.getVoices();
+  var ptv = voices.filter(function(v){return v.lang.indexOf('pt')===0;});
+  var pref = ptv.find(function(v){return /female|luciana|vitoria|ana|brasil/i.test(v.name);})
+          || ptv.find(function(v){return v.lang==='pt-BR';})
+          || ptv[0];
+  if (pref) u.voice = pref;
+  window.speechSynthesis.speak(u);
 }
 
 // ── Interações ────────────────────────────────────────────────────
@@ -2167,7 +2186,13 @@ function brcDescartarById(id) {
   brcNorm(ne);
   if (papel==='a') ne.maoA=rest; else ne.maoB=rest;
   ne.descarte.push(disc);
-  if (!rest.length&&mortoU) { brcFinalizar(ne); return; }
+  if (!rest.length&&mortoU) {
+    var meus=papel==='a'?ne.canastrasA:ne.canastrasB;
+    var temLimpa=false;
+    for (var i=0;i<meus.length;i++) { if(brcIsLimpa(meus[i])){temLimpa=true;break;} }
+    if (!temLimpa) { toast('precisa de canastra limpa para fechar'); brcEst=ne; brcSave(ne); brcRender(ne); return; }
+    brcFinalizar(ne); return;
+  }
   ne.turno=papel==='a'?'b':'a'; ne.fase='comprar'; ne.v=Date.now();
   brcEst=ne; brcSave(ne); brcRender(ne);
 }
