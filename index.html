@@ -1571,14 +1571,34 @@ function _brcStep(x, y) {
   if (_brcMode === 'reorder') {
     _brcGhostXY(x, y);
     _brcReorderHint(x, y);
+    _brcEdgeScroll(x, y);
     return true;
   }
   if (_brcMode === 'drag') {
     _brcGhostXY(x, y);
     _brcHint(x, y);
+    _brcEdgeScroll(x, y);
     return true;
   }
   return false;
+}
+
+function _brcEdgeScroll(cx, cy) {
+  var maoEl = document.getElementById('brc-mao');
+  if (!maoEl) return;
+  var r = maoEl.getBoundingClientRect();
+  var isLand = window.innerHeight < 500 && window.innerWidth > window.innerHeight;
+  var zone = 72; // px da borda que ativa o scroll
+  var maxSpd = 12;
+  if (isLand) {
+    var ft = cy - r.top, fb = r.bottom - cy;
+    if (ft >= 0 && ft < zone) maoEl.scrollTop -= (zone - ft) / zone * maxSpd;
+    else if (fb >= 0 && fb < zone) maoEl.scrollTop += (zone - fb) / zone * maxSpd;
+  } else {
+    var fl = cx - r.left, fr = r.right - cx;
+    if (fl >= 0 && fl < zone) maoEl.scrollLeft -= (zone - fl) / zone * maxSpd;
+    else if (fr >= 0 && fr < zone) maoEl.scrollLeft += (zone - fr) / zone * maxSpd;
+  }
 }
 
 function _brcFinish(x, y) {
