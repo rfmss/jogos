@@ -9,6 +9,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#6b9ab8">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="icon-blue.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-blue.png">
 <script>(function(){var P=[{n:'terra',h:'#cd7b5f'},{n:'olive',h:'#6e7a4e'},{n:'rose',h:'#c4708a'},{n:'lavender',h:'#9b8fc4'},{n:'blue',h:'#6b9ab8'},{n:'sage',h:'#8fb3ae'}];var c=P[Math.floor(Math.random()*P.length)];var q=document.querySelector.bind(document);var e;e=q('meta[name="theme-color"]');if(e)e.setAttribute('content',c.h);e=q('link[rel="apple-touch-icon-precomposed"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');e=q('link[rel="apple-touch-icon"]');if(e)e.setAttribute('href','icon-'+c.n+'.png');var s=document.createElement('style');s.innerHTML='html,body,.app,.brc-right{background:'+c.h+'!important}';document.head.appendChild(s);window._pal=c;})();</script>
@@ -379,7 +382,7 @@ body.standalone .app { padding-top: 44px; }
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
   -webkit-box-flex:1; -webkit-flex:1; flex:1;
   min-height:0; overflow:hidden;
-  padding-bottom:130px; /* espaço para mão fixada embaixo */
+  padding-bottom:210px; /* espaço para mão fixada embaixo */
 }
 /* LAYER: mão — position:fixed, sempre por cima, sem clipping */
 .brc-right {
@@ -394,17 +397,17 @@ body.standalone .app { padding-top: 44px; }
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
   overflow-x:auto; -webkit-overflow-scrolling:touch;
-  padding:8px 12px 6px; gap:5px; -webkit-flex-shrink:0; flex-shrink:0;
+  padding:8px 12px 6px; gap:6px; -webkit-flex-shrink:0; flex-shrink:0;
 }
 /* landscape phone: coluna direita fixa */
 @media screen and (max-height:500px) and (orientation:landscape) {
   .brc-left {
     padding-bottom:0;
-    margin-right:152px;
+    margin-right:192px;
   }
   .brc-right {
     top:0; right:0; bottom:0;
-    left:auto; width:152px;
+    left:auto; width:192px;
     border-left:1px solid rgba(0,0,0,0.12);
   }
   .brc-mao {
@@ -456,19 +459,19 @@ body.standalone .app { padding-top: 44px; }
   padding:8px 0; -webkit-flex-shrink:0; flex-shrink:0;
 }
 .brc-stock-btn {
-  width:62px; height:86px; border-radius:8px;
+  width:72px; height:100px; border-radius:10px;
   border:2px solid rgba(0,0,0,0.2); background:rgba(0,0,0,0.2);
-  font-family:'Courier New',Courier,monospace; font-size:10px; color:#2a2a2a; cursor:pointer;
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif; font-size:12px; font-weight:700; color:#2a2a2a; cursor:pointer;
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
   -webkit-box-align:center; -webkit-align-items:center; align-items:center;
   -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
-  gap:2px;
+  gap:3px;
 }
 .brc-stock-btn:disabled { opacity:0.4; cursor:default; }
 .brc-disc-area {
-  width:62px; height:86px; border-radius:8px;
-  border:2px dashed rgba(0,0,0,0.25);
+  width:72px; height:100px; border-radius:10px;
+  border:3px dashed rgba(0,0,0,0.28);
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-align:center; -webkit-align-items:center; align-items:center;
   -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
@@ -486,30 +489,30 @@ body.standalone .app { padding-top: 44px; }
 }
 .brc-card {
   display:inline-block; position:relative; vertical-align:top;
-  width:50px; height:70px; border-radius:7px;
-  background:#f4ede4; border:1.5px solid rgba(0,0,0,0.15);
-  font-family:'Courier New',Courier,monospace;
-  font-weight:700; color:#2a2a2a; cursor:pointer;
+  width:66px; height:92px; border-radius:10px;
+  background:#fff; border:2px solid rgba(0,0,0,0.13);
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+  font-weight:800; color:#1a1a1a; cursor:pointer;
   -webkit-flex-shrink:0; flex-shrink:0;
   -webkit-transition:-webkit-transform 0.13s; transition:transform 0.13s;
   -webkit-user-select:none; user-select:none;
   touch-action:manipulation;
 }
-.brc-c { position:absolute; font-size:13px; line-height:1; }
-.brc-tl { top:4px; left:4px; }
-.brc-br { bottom:4px; right:4px; -webkit-transform:rotate(180deg); transform:rotate(180deg); }
+.brc-c { position:absolute; font-size:22px; line-height:1; }
+.brc-tl { top:4px; left:5px; }
+.brc-br { bottom:4px; right:5px; -webkit-transform:rotate(180deg); transform:rotate(180deg); }
 .brc-suit-c { position:absolute; top:50%; left:50%; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%); line-height:0; }
-.brc-suit-c svg { width:26px; height:26px; display:block; }
-.brc-card.red { color:#d98a8a; }
-.brc-card.wild { color:#7c3aed; background:#f0ebff; }
-.brc-card.selected { border-color:#2a2a2a; border-width:2.5px; -webkit-transform:translateY(-12px); transform:translateY(-12px); }
-.brc-card.sm { width:33px; height:47px; border-radius:5px; cursor:default; touch-action:auto; }
-.brc-card.sm .brc-c { font-size:9px; }
-.brc-card.sm .brc-suit-c svg { width:16px; height:16px; }
+.brc-suit-c svg { width:34px; height:34px; display:block; }
+.brc-card.red { color:#d40000; }
+.brc-card.wild { color:#6d28d9; background:#f5f0ff; }
+.brc-card.selected { border-color:#1a1a1a; border-width:3px; -webkit-transform:translateY(-14px); transform:translateY(-14px); }
+.brc-card.sm { width:38px; height:52px; border-radius:6px; cursor:default; touch-action:auto; }
+.brc-card.sm .brc-c { font-size:12px; }
+.brc-card.sm .brc-suit-c svg { width:18px; height:18px; }
 .brc-card.sm .brc-br { display:none; }
-.brc-card.dc { width:62px; height:86px; border-radius:9px; }
-.brc-card.dc .brc-c { font-size:16px; }
-.brc-card.dc .brc-suit-c svg { width:32px; height:32px; }
+.brc-card.dc { width:72px; height:100px; border-radius:10px; }
+.brc-card.dc .brc-c { font-size:22px; }
+.brc-card.dc .brc-suit-c svg { width:38px; height:38px; }
 .brc-card.novo { -webkit-animation:brcDraw 0.48s ease; animation:brcDraw 0.48s ease; }
 .brc-card.dragging { opacity:0.25; }
 .brc-meld {
@@ -528,14 +531,18 @@ body.standalone .app { padding-top: 44px; }
 .brc-mao {
   display:-webkit-box; display:-webkit-flex; display:flex;
   -webkit-box-orient:horizontal; -webkit-flex-direction:row; flex-direction:row;
-  overflow-x:auto; padding:18px 12px 6px; gap:5px;
+  overflow-x:auto; padding:20px 10px 8px; gap:6px;
   -webkit-flex-shrink:0; flex-shrink:0; -webkit-overflow-scrolling:touch;
 }
 .brc-status {
-  font-family:'Courier New',Courier,monospace;
-  font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
-  text-align:center; opacity:0.65; padding:4px 12px 10px;
-  min-height:28px; -webkit-flex-shrink:0; flex-shrink:0;
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+  font-size:16px; font-weight:700; letter-spacing:0;
+  text-align:center; background:rgba(0,0,0,0.82); color:#fff;
+  padding:10px 16px; min-height:46px;
+  -webkit-flex-shrink:0; flex-shrink:0;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
 }
 #brc-ghost {
   position:fixed; pointer-events:none; z-index:9995;
@@ -546,7 +553,7 @@ body.standalone .app { padding-top: 44px; }
 }
 #brc-drop-cursor {
   position:fixed; pointer-events:none; z-index:9994;
-  width:3px; height:58px; background:#2a2a2a;
+  width:3px; height:72px; background:#2a2a2a;
   border-radius:2px; opacity:0.7;
 }
 .brc-disc-area.drop-over { border-color:#2a2a2a !important; background:rgba(0,0,0,0.12); }
@@ -562,6 +569,61 @@ body.standalone .app { padding-top: 44px; }
   100% { box-shadow:none; }
 }
 .brc-card.land { -webkit-animation:brcLand 0.35s ease; animation:brcLand 0.35s ease; }
+/* ══ Tutorial overlay ══ */
+#brc-tutorial {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.95); z-index:10000;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-orient:vertical; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+  padding:28px; color:#fff;
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+}
+#brc-tutorial.hidden { display:none !important; }
+.tut-step { text-align:center; max-width:360px; width:100%; }
+.tut-dots { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; gap:8px; margin-bottom:28px; }
+.tut-dot { width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,0.28); }
+.tut-dot.active { background:#fff; }
+.tut-emoji { font-size:72px; margin-bottom:18px; line-height:1; }
+.tut-title { font-size:26px; font-weight:800; margin-bottom:12px; line-height:1.2; }
+.tut-body { font-size:18px; font-weight:400; line-height:1.6; margin-bottom:36px; opacity:0.88; }
+.tut-btn {
+  background:#fff; color:#1a1a1a; border:none; border-radius:50px;
+  padding:18px 44px; font-size:18px; font-weight:800;
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+  cursor:pointer; -webkit-transition:-webkit-transform 0.1s; transition:transform 0.1s;
+}
+.tut-btn:active { -webkit-transform:scale(0.96); transform:scale(0.96); }
+.brc-help-btn {
+  position:fixed; bottom:10px; right:14px;
+  width:38px; height:38px; border-radius:50%;
+  background:rgba(0,0,0,0.5); color:#fff; border:none;
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+  font-size:20px; font-weight:800; cursor:pointer;
+  z-index:400;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+}
+.brc-help-btn.hidden { display:none !important; }
+/* Share button */
+.share-btn {
+  background:#2a2a2a; color:#f4ede4; border:none; border-radius:50px;
+  padding:16px 32px; font-size:18px; font-weight:700;
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+  cursor:pointer; margin-top:6px;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-box-align:center; -webkit-align-items:center; align-items:center;
+  -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center;
+  gap:10px; -webkit-transition:opacity 0.1s; transition:opacity 0.1s;
+}
+.share-btn:active { opacity:0.75; }
+.share-label {
+  font-family:'Nunito','Arial Rounded MT Bold',Arial,sans-serif;
+  font-size:13px; font-weight:700; opacity:0.55; margin-top:6px;
+}
+
 .brc-fim {
   position:fixed; top:0; left:0; right:0; bottom:0;
   background:rgba(0,0,0,0.82); z-index:9990;
@@ -603,7 +665,13 @@ body.standalone .app { padding-top: 44px; }
     <div class="waiting-wrap">
       <div class="waiting-label">código da sala</div>
       <div class="room-code" id="waiting-code">--</div>
-      <div class="waiting-label">
+      <button class="share-btn" onclick="compartilharSala()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Compartilhar convite
+      </button>
+      <div class="share-label" id="waiting-share-hint">ou envie o código <strong id="waiting-code-inline">--</strong> para a pessoa</div>
+      <input type="hidden" id="waiting-share-url" value="">
+      <div class="waiting-label" style="margin-top:16px">
         aguardando o outro jogador<span class="dot-anim" id="dots"></span>
       </div>
       <div class="mic-status" id="mic-status-w"></div>
@@ -756,13 +824,27 @@ body.standalone .app { padding-top: 44px; }
         </div>
       </div>
       <div class="brc-right">
-        <div class="brc-mao" id="brc-mao"></div>
         <div class="brc-status" id="brc-status"></div>
+        <div class="brc-mao" id="brc-mao"></div>
       </div>
     </div>
   </div>
 
 </div>
+
+<!-- BURACO tutorial overlay -->
+<div id="brc-tutorial" class="hidden">
+  <div class="tut-step">
+    <div class="tut-dots" id="tut-dots"></div>
+    <div class="tut-emoji" id="tut-emoji">🃏</div>
+    <div class="tut-title" id="tut-title"></div>
+    <div class="tut-body" id="tut-body"></div>
+    <button class="tut-btn" id="tut-btn" onclick="brcTutNext()">próximo →</button>
+  </div>
+</div>
+
+<!-- BURACO help button -->
+<button class="brc-help-btn hidden" id="brc-help-btn" onclick="brcTutShow()">?</button>
 
 <!-- BURACO fim overlay -->
 <div class="brc-fim hidden" id="brc-fim">
@@ -961,6 +1043,8 @@ function selecionarJogo(jogo) {
 function voltarMenu() {
   if (rpsPollingTimer) { clearInterval(rpsPollingTimer); rpsPollingTimer = null; }
   rpsEscolha = null; rpsRevelado = false;
+  var hb = document.getElementById('brc-help-btn');
+  if (hb) hb.className = 'brc-help-btn hidden';
   dbPatch(sala, { jogoAtivo: null });
 }
 
@@ -1152,6 +1236,10 @@ function criarSala() {
   papel = 'a';
   salvarSessao();
   document.getElementById('waiting-code').innerHTML = sala;
+  var ci = document.getElementById('waiting-code-inline');
+  if (ci) ci.innerHTML = sala;
+  var su = document.getElementById('waiting-share-url');
+  if (su) su.value = window.location.href.split('?')[0] + '?sala=' + sala;
   mostrarTela('screen-waiting');
   startDots('dots');
 
@@ -1603,7 +1691,7 @@ function _brcReorderHint(cx, cy) {
   }
   _brcReorderIdx = target;
   // Abre gap: empurra cartas após o ponto de inserção
-  var shift = isLand ? 55 : 58; // altura ou largura da carta + gap
+  var shift = isLand ? 72 : 72; // altura ou largura da carta + gap
   for (var j = 0; j < cards.length; j++) {
     if (cards[j].className.indexOf('dragging') >= 0) {
       cards[j].style.webkitTransform = '';
@@ -1700,17 +1788,18 @@ function brcRed(c)  { return c.suit==='H'||c.suit==='D'; }
 function brcValRank(cards) {
   var nat=[], w=0;
   for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
-  if (!nat.length) return false;
+  if (nat.length < 2) return false; // precisa de ao menos 2 cartas naturais
   if (nat[0].rank==='2') return false;
   var r0=nat[0].rank;
   for (var i=1;i<nat.length;i++) { if(nat[i].rank!==r0) return false; }
-  return w<=nat.length;
+  return w < nat.length; // curingas devem ser MENOS que naturais
 }
 
 function brcValSeq(cards) {
   var nat=[], w=0;
   for (var i=0;i<cards.length;i++) { if(brcWild(cards[i])) w++; else nat.push(cards[i]); }
-  if (!nat.length) return false;
+  if (nat.length < 2) return false; // precisa de ao menos 2 cartas naturais
+  if (w >= nat.length) return false; // curingas devem ser MENOS que naturais
   var s0=nat[0].suit;
   if (!s0) return false;
   for (var i=0;i<nat.length;i++) {
@@ -1754,6 +1843,16 @@ function brcClone(o) { return JSON.parse(JSON.stringify(o)); }
 function iniciarBuraco() {
   brcSel=[]; brcMeldSel=null; brcEst=null; brcLastV=-1;
   if (brcPollTimer) clearInterval(brcPollTimer);
+  // Mostra botão de ajuda
+  var hb = document.getElementById('brc-help-btn');
+  if (hb) hb.className = 'brc-help-btn';
+  // Tutorial na primeira vez
+  brcTutStep = 0;
+  try {
+    if (!localStorage.getItem('brc_tutok')) {
+      setTimeout(brcTutShow, 800);
+    }
+  } catch(x) {}
 
   if (papel==='a') {
     var deck=brcEmb(brcBaralho());
@@ -2077,9 +2176,98 @@ function brcNovaPartida() {
   var fEl=document.getElementById('brc-fim');
   if(fEl) fEl.className='brc-fim hidden';
   brcSel=[]; brcMeldSel=null;
+  var hb = document.getElementById('brc-help-btn');
+  if (hb) hb.className = 'brc-help-btn hidden';
   if (brcPollTimer){ clearInterval(brcPollTimer); brcPollTimer=null; }
   dbPatch(sala,{jogoAtivo:null});
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// TUTORIAL
+// ═══════════════════════════════════════════════════════════════════
+var brcTutStep = 0;
+var BRC_TUT = [
+  { emoji: '🃏', title: 'Compre uma carta', body: 'Toque no monte (🂠) ou na carta do descarte para começar sua vez.' },
+  { emoji: '✋', title: 'Selecione cartas', body: 'Toque nas cartas para selecioná-las. Selecione 3 ou mais do mesmo número ou em sequência.' },
+  { emoji: '⬆️', title: 'Baixe na mesa', body: 'Com 3 ou mais cartas selecionadas, arraste para cima para baixar um meld.' },
+  { emoji: '🗑️', title: 'Descarte para passar', body: 'Selecione 1 carta e arraste para o descarte, ou toque na pilha de descarte.' }
+];
+
+function brcTutShow() {
+  brcTutStep = 0;
+  var el = document.getElementById('brc-tutorial');
+  if (el) el.className = '';
+  brcTutRender();
+}
+
+function brcTutRender() {
+  var s = BRC_TUT[brcTutStep];
+  var dots = '';
+  for (var i = 0; i < BRC_TUT.length; i++) {
+    dots += '<div class="tut-dot' + (i === brcTutStep ? ' active' : '') + '"></div>';
+  }
+  var dotsEl = document.getElementById('tut-dots');
+  if (dotsEl) dotsEl.innerHTML = dots;
+  var emoji = document.getElementById('tut-emoji');
+  if (emoji) emoji.innerHTML = s.emoji;
+  var title = document.getElementById('tut-title');
+  if (title) title.innerHTML = s.title;
+  var body = document.getElementById('tut-body');
+  if (body) body.innerHTML = s.body;
+  var btn = document.getElementById('tut-btn');
+  if (btn) btn.innerHTML = brcTutStep < BRC_TUT.length - 1 ? 'próximo &rarr;' : 'vamos jogar!';
+}
+
+function brcTutNext() {
+  if (brcTutStep < BRC_TUT.length - 1) {
+    brcTutStep++;
+    brcTutRender();
+  } else {
+    var el = document.getElementById('brc-tutorial');
+    if (el) el.className = 'hidden';
+    try { localStorage.setItem('brc_tutok', '1'); } catch(x) {}
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPARTILHAR SALA
+// ═══════════════════════════════════════════════════════════════════
+function compartilharSala() {
+  var base = window.location.href.split('?')[0];
+  var url = base + '?sala=' + sala;
+  if (navigator.share) {
+    navigator.share({ title: 'Buraco', text: 'Vamos jogar Buraco! Sala ' + sala, url: url });
+  } else {
+    var inp = document.getElementById('waiting-share-url');
+    inp.type = 'text';
+    inp.value = url;
+    try {
+      inp.select();
+      document.execCommand('copy');
+      toast('link copiado!');
+    } catch(e) {
+      toast('link: ' + url);
+    }
+    inp.type = 'hidden';
+  }
+}
+
+// ── URL param: auto-entrar na sala se ?sala=XX ────────────────────
+(function() {
+  var search = window.location.search;
+  if (!search) return;
+  var m = search.match(/[?&]sala=(\d{2})/);
+  if (!m) return;
+  var code = m[1];
+  // limpa a URL para evitar re-join no refresh
+  try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
+  // aguarda DOM estar pronto e então entra
+  setTimeout(function() {
+    var inp = document.getElementById('inp-code');
+    if (inp) inp.value = code;
+    entrarSala();
+  }, 400);
+})();
 
 restoreSession();
 </script>
