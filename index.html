@@ -551,6 +551,8 @@ body.standalone .app { padding-top: 44px; }
   -webkit-transform:scale(1.12); transform:scale(1.12);
   opacity:0.92; overflow:hidden;
 }
+#brc-ghost.red { color:#d40000; }
+#brc-ghost.wild { color:#6d28d9; background:#f5f0ff; }
 #brc-drop-cursor {
   position:fixed; pointer-events:none; z-index:9994;
   width:3px; height:72px; background:#2a2a2a;
@@ -1656,6 +1658,11 @@ function _brcMkGhost(el, ids, cx, cy) {
   var rect = el.getBoundingClientRect();
   var g = document.createElement('div');
   g.id = 'brc-ghost';
+  // Copiar classes visuais da carta (red, wild) para manter coerência visual
+  var extraCls = '';
+  if (el.className.indexOf('red') >= 0) extraCls += ' red';
+  if (el.className.indexOf('wild') >= 0) extraCls += ' wild';
+  if (extraCls) g.className = extraCls.trim();
   g.innerHTML = el.innerHTML;
   g.style.width  = rect.width  + 'px';
   g.style.height = rect.height + 'px';
